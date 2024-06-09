@@ -7,7 +7,7 @@ import {
   extractZip,
 } from '@actions/tool-cache';
 
-import { getBinaryPath, getDownloadObject } from './utils';
+import { getBinaryDirectory, getBinaryPath, getDownloadObject } from './utils';
 
 export async function run() {
   try {
@@ -21,7 +21,10 @@ export async function run() {
 
     // Extract the tarball/zipball onto the host runner
     const extract = download.sdk.endsWith('.zip') ? extractZip : extractTar;
-    const binaryDirectory = await extract(pathToTarball);
+    const binaryDirectory = getBinaryDirectory(
+      await extract(pathToTarball),
+      version,
+    );
 
     // Rename the binary
     const binaryPath = getBinaryPath(binaryDirectory, name).replace('.sh', '');

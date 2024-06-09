@@ -1,5 +1,5 @@
-import os from 'os';
-import path from 'path';
+import { arch, platform } from 'os';
+import { join } from 'path';
 
 /**
  * Gets download object.
@@ -11,7 +11,7 @@ import path from 'path';
  */
 export function getDownloadObject(version: string) {
   return {
-    sdk: `https://www.renpy.org/dl/${version}/renpy-${version}-sdk${os.arch().includes('arm') ? 'arm.tar.bz2' : '.zip'}`,
+    sdk: `https://www.renpy.org/dl/${version}/renpy-${version}-sdk${arch().includes('arm') ? 'arm.tar.bz2' : '.zip'}`,
     rapt: `https://www.renpy.org/dl/${version}/renpy-${version}-rapt.zip`,
     renios: `https://www.renpy.org/dl/${version}/renpy-${version}-renios.zip`,
     web: `https://www.renpy.org/dl/${version}/renpy-${version}-web.zip`,
@@ -26,8 +26,19 @@ export function getDownloadObject(version: string) {
  * @returns - Binary path
  */
 export function getBinaryPath(directory: string, name: string) {
-  return path.join(
+  return join(directory, name + (platform() === 'win32' ? '.exe' : '.sh'));
+}
+
+/**
+ * Gets CLI directory.
+ *
+ * @param directory - Directory
+ * @param version - CLI version
+ * @returns - Binary directory
+ */
+export function getBinaryDirectory(directory: string, version: string) {
+  return join(
     directory,
-    name + (os.platform() === 'win32' ? '.exe' : '.sh'),
+    `renpy-${version}-sdk${arch().includes('arm') ? 'arm' : ''}`,
   );
 }

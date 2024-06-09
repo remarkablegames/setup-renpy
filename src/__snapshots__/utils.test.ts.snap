@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`getBinaryDirectory returns CLI directory 1`] = `"directory/8.2.1.sh"`;
+
 exports[`getBinaryPath when OS is "darwin" returns CLI filepath 1`] = `"directory/name.sh"`;
 
 exports[`getBinaryPath when OS is "linux" returns CLI filepath 1`] = `"directory/name.sh"`;

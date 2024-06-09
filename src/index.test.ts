@@ -29,8 +29,8 @@ describe.each([
   ['win32', 'x64'],
 ])('when os is %p and arch is %p', (os, arch) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValueOnce(os as NodeJS.Platform);
-    mockedOs.arch.mockReturnValueOnce(arch as NodeJS.Architecture);
+    mockedOs.platform.mockReturnValue(os as NodeJS.Platform);
+    mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
 
     mockedCore.getInput.mockImplementation((input) => {
       switch (input) {
@@ -64,8 +64,9 @@ describe.each([
       expect.stringContaining(name),
     ]);
 
-    expect(mockedTc.cacheDir).toHaveBeenCalledWith(pathToCLI, name, version);
-    expect(mockedCore.addPath).toHaveBeenCalledWith(pathToCLI);
+    const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
+    expect(mockedTc.cacheDir).toHaveBeenCalledWith(sdkDirectory, name, version);
+    expect(mockedCore.addPath).toHaveBeenCalledWith(sdkDirectory);
   });
 });
 
@@ -75,8 +76,8 @@ describe.each([
   { rapt: false, renios: false, web: true },
 ])('when input is %p and arch is %p', (inputs) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValueOnce('darwin');
-    mockedOs.arch.mockReturnValueOnce('x64');
+    mockedOs.platform.mockReturnValue('darwin');
+    mockedOs.arch.mockReturnValue('x64');
 
     mockedCore.getInput.mockImplementation((input) => {
       switch (input) {
@@ -106,11 +107,12 @@ describe.each([
       if (value) {
         expect(mockedTc.downloadTool).toHaveBeenCalledWith(
           `https://www.renpy.org/dl/${version}/renpy-${version}-${key}.zip`,
-          pathToCLI,
+          `${pathToCLI}/renpy-${version}-sdk`,
         );
+
         expect(mockedTc.extractZip).toHaveBeenCalledWith(
           pathToTarball,
-          pathToCLI,
+          `${pathToCLI}/renpy-${version}-sdk`,
         );
       }
     });
