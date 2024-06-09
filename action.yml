@@ -1,4 +1,4 @@
-name: github-actions-setup-cli-template
+name: setup-renpy
 description: GitHub Actions setup CLI template
 author: remarkablemark
 inputs:
