@@ -21,16 +21,16 @@ beforeEach(() => {
 
 const name = 'cli-name';
 const version = '1.2.3';
+const pathToTarball = 'path/to/tarball';
+const pathToCLI = 'path/to/cli';
 
-describe.each(['darwin', 'win32', 'linux'])('when OS is %p', (os) => {
+describe.each([
+  ['linux', 'arm64'],
+  ['win32', 'x64'],
+])('when os is %p and arch is %p', (os, arch) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValueOnce(os as NodeJS.Platform);
-    mockedOs.arch.mockReturnValueOnce('arm64');
-  });
-
-  it('downloads, extracts, and adds CLI in PATH', async () => {
-    const pathToTarball = 'path/to/tarball';
-    const pathToCLI = 'path/to/cli';
+    mockedOs.platform.mockReturnValue(os as NodeJS.Platform);
+    mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
 
     mockedCore.getInput.mockImplementation((input) => {
       switch (input) {
@@ -42,7 +42,9 @@ describe.each(['darwin', 'win32', 'linux'])('when OS is %p', (os) => {
           return '';
       }
     });
+  });
 
+  it('downloads, extracts, and adds SDK to PATH', async () => {
     mockedTc.downloadTool.mockResolvedValueOnce(pathToTarball);
     const extract = os === 'win32' ? mockedTc.extractZip : mockedTc.extractTar;
     extract.mockResolvedValueOnce(pathToCLI);
@@ -51,27 +53,69 @@ describe.each(['darwin', 'win32', 'linux'])('when OS is %p', (os) => {
 
     expect(mockedTc.downloadTool).toHaveBeenCalledWith(
       expect.stringContaining(
-        `https://github.com/cli/cli/releases/download/v${version}/gh_${version}_`,
+        `https://www.renpy.org/dl/${version}/renpy-${version}-sdk`,
       ),
     );
 
     expect(extract).toHaveBeenCalledWith(pathToTarball);
 
     expect(mockedExec.exec).toHaveBeenCalledWith('mv', [
-      expect.stringContaining('/bin/gh'),
-      expect.stringContaining(`/bin/${name}`),
+      expect.stringContaining('renpy'),
+      expect.stringContaining(name),
     ]);
 
-    expect(mockedTc.cacheFile).toHaveBeenCalledWith(
-      expect.stringContaining(`/bin/${name}`),
-      name,
-      name,
-      version,
-    );
+    const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
+    expect(mockedTc.cacheDir).toHaveBeenCalledWith(sdkDirectory, name, version);
+    expect(mockedCore.addPath).toHaveBeenCalledWith(sdkDirectory);
+  });
+});
 
-    expect(mockedCore.addPath).toHaveBeenCalledWith(
-      expect.stringContaining(pathToCLI),
-    );
+describe.each([
+  { rapt: true, renios: false, web: false },
+  { rapt: false, renios: true, web: false },
+  { rapt: false, renios: false, web: true },
+])('when input is %p and arch is %p', (inputs) => {
+  beforeEach(() => {
+    mockedOs.platform.mockReturnValue('darwin');
+    mockedOs.arch.mockReturnValue('x64');
+
+    mockedCore.getInput.mockImplementation((input) => {
+      switch (input) {
+        case 'cli-version':
+          return version;
+        case 'cli-name':
+          return name;
+        case 'rapt':
+          return String(inputs.rapt);
+        case 'renios':
+          return String(inputs.renios);
+        case 'web':
+          return String(inputs.web);
+        default:
+          return '';
+      }
+    });
+  });
+
+  it('downloads, extracts, and adds SDK to PATH', async () => {
+    mockedTc.downloadTool.mockResolvedValue(pathToTarball);
+    mockedTc.extractZip.mockResolvedValue(pathToCLI);
+
+    await run();
+
+    Object.entries(inputs).forEach(([key, value]) => {
+      if (value) {
+        expect(mockedTc.downloadTool).toHaveBeenCalledWith(
+          `https://www.renpy.org/dl/${version}/renpy-${version}-${key}.zip`,
+          `${pathToCLI}/renpy-${version}-sdk`,
+        );
+
+        expect(mockedTc.extractZip).toHaveBeenCalledWith(
+          pathToTarball,
+          `${pathToCLI}/renpy-${version}-sdk`,
+        );
+      }
+    });
   });
 });
 

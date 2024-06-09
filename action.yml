@@ -1,18 +1,30 @@
 name: setup-renpy
-description: GitHub Actions setup CLI template
+description: Set up GitHub Actions workflow with Ren'Py CLI
 author: remarkablemark
 inputs:
   cli-version:
     description: CLI version
     required: false
-    default: 2.49.0
+    default: 8.2.1
   cli-name:
     description: CLI name
     required: false
-    default: gh
+    default: renpy-cli
+  rapt:
+    description: Android Support (RAPT)
+    required: false
+    default: false
+  renios:
+    description: iOS Support (Renios)
+    required: false
+    default: false
+  web:
+    description: Web Platform Support (Renpyweb)
+    required: false
+    default: false
 runs:
   using: node20
   main: dist/index.js
 branding:
-  icon: activity
-  color: gray-dark
+  icon: book-open
+  color: yellow

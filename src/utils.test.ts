@@ -16,10 +16,10 @@ const table = platforms.reduce(
   [] as [string, string][],
 );
 
+const version = '8.2.1';
+
 describe('getDownloadObject', () => {
   describe.each(table)('when OS is %p and arch is %p', (os, arch) => {
-    const version = '2.27.0';
-
     beforeEach(() => {
       jest.resetAllMocks();
       mockedOs.platform.mockReturnValueOnce(os as NodeJS.Platform);
@@ -44,5 +44,12 @@ describe('getBinaryPath', () => {
       const name = 'name';
       expect(getBinaryPath(directory, name)).toMatchSnapshot();
     });
+  });
+});
+
+describe('getBinaryDirectory', () => {
+  it('returns CLI directory', () => {
+    const directory = 'directory';
+    expect(getBinaryPath(directory, version)).toMatchSnapshot();
   });
 });
