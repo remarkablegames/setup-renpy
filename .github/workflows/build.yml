@@ -76,16 +76,16 @@ jobs:
           cli-version: ${{ matrix.version }}
 
       - name: Locate binary
-        run: command -v renpy
+        run: command -v renpy-cli
 
       - name: Check version
         if: matrix.os != 'windows-latest'
         run: |
-          if [[ $(renpy --version) != *'${{ matrix.version }}'* ]]; then
+          if [[ $(renpy-cli --version) != *'${{ matrix.version }}'* ]]; then
             echo 'Version does not match. See version below:'
             renpy-cli --version
             exit 1
           fi
 
       - name: Show help
-        run: renpy --help
+        run: renpy-cli --help

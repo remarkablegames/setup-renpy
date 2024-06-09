@@ -1,7 +1,7 @@
 {
   "name": "setup-renpy",
   "version": "1.0.0-alpha",
-  "description": "Set up GitHub Actions workflow with Ren'Py SDK",
+  "description": "Set up GitHub Actions workflow with Ren'Py CLI",
   "author": "Mark <mark@remarkablemark.org>",
   "main": "src/index.ts",
   "scripts": {

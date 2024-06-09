@@ -7,14 +7,13 @@ import {
   extractZip,
 } from '@actions/tool-cache';
 
-import { CLI_NAME, VERSION } from './constants';
 import { getBinaryPath, getDownloadObject } from './utils';
 
 export async function run() {
   try {
     // Get the version and name of the SDK to be installed
-    const version = getInput('cli-version') || VERSION;
-    const name = getInput('cli-name') || CLI_NAME;
+    const version = getInput('cli-version');
+    const name = getInput('cli-name');
 
     // Download the specific version of the SDK (e.g., tarball/zipball)
     const download = getDownloadObject(version);
@@ -24,11 +23,9 @@ export async function run() {
     const extract = download.sdk.endsWith('.zip') ? extractZip : extractTar;
     const binaryDirectory = await extract(pathToTarball);
 
-    // Get or rename the binary path
-    const binaryPath = getBinaryPath(binaryDirectory, name);
-    if (name !== CLI_NAME) {
-      await exec('mv', [getBinaryPath(binaryDirectory, CLI_NAME), binaryPath]);
-    }
+    // Rename the binary
+    const binaryPath = getBinaryPath(binaryDirectory, name).replace('.sh', '');
+    await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
 
     // Add Android/iOS/Web support
     await Promise.all(

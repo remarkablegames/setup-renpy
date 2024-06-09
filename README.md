@@ -4,7 +4,7 @@
 [![build](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml/badge.svg)](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/remarkablegames/setup-renpy/graph/badge.svg?token=xTSeP1FvRP)](https://codecov.io/gh/remarkablegames/setup-renpy)
 
-📖 Set up GitHub Actions workflow with [Ren'Py SDK](https://www.renpy.org/latest.html).
+📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html).
 
 ## Quick Start
 
@@ -43,13 +43,16 @@ See [action.yml](action.yml)
 
 ### `cli-name`
 
-**Optional**: The CLI name. Defaults to `renpy`:
+**Optional**: The CLI name. Defaults to `renpy-cli`:
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
   with:
-    cli-name: renpy
+    cli-name: renpy-cli
 ```
+
+> [!NOTE]
+> The CLI name cannot be `renpy` due to the SDK directory structure.
 
 ### `rapt`
 
