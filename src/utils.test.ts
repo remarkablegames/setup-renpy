@@ -18,7 +18,7 @@ const table = platforms.reduce(
 
 describe('getDownloadObject', () => {
   describe.each(table)('when OS is %p and arch is %p', (os, arch) => {
-    const version = '2.27.0';
+    const version = '8.2.1';
 
     beforeEach(() => {
       jest.resetAllMocks();

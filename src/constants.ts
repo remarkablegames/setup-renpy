@@ -1,6 +1,6 @@
-export const CLI_NAME = 'gh';
+export const CLI_NAME = 'renpy';
 
 /**
- * @see https://github.com/cli/cli/releases
+ * @see https://www.renpy.org/latest.html
  */
-export const VERSION = '2.49.0';
+export const VERSION = '8.2.1';
