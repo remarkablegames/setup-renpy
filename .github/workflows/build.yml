@@ -81,7 +81,8 @@ jobs:
       - name: Check version
         if: matrix.os != 'windows-latest'
         run: |
-          if [[ $(renpy-cli --version) != *'${{ matrix.version }}'* ]]; then
+          renpy-cli --version &> RENPY_VERSION
+          if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
             echo 'Version does not match. See version below:'
             renpy-cli --version
             exit 1
