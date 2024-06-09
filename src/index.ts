@@ -28,18 +28,19 @@ export async function run() {
     await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
 
     // Add Android/iOS/Web support
+    const addons = (['rapt', 'renios', 'web'] as const).filter(
+      (platform) => getInput(platform) === 'true',
+    );
     await Promise.all(
-      (['rapt', 'renios', 'web'] as const)
-        .filter((platform) => getInput(platform) === 'true')
-        .map((platform) =>
-          downloadTool(download[platform], binaryDirectory).then(
-            (downloadPath) => extractZip(downloadPath, binaryDirectory),
-          ),
+      addons.map((platform) =>
+        downloadTool(download[platform], binaryDirectory).then((downloadPath) =>
+          extractZip(downloadPath, binaryDirectory),
         ),
+      ),
     );
 
     // Cache the SDK
-    await cacheDir(binaryDirectory, name, version);
+    await cacheDir(binaryDirectory, [name, ...addons].join('_'), version);
 
     // Expose the SDK by adding it to the PATH
     addPath(binaryDirectory);
