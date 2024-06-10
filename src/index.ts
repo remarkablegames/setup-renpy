@@ -1,4 +1,4 @@
-import { addPath, getInput, setFailed } from '@actions/core';
+import { addPath, getInput, setFailed, setOutput } from '@actions/core';
 import { exec } from '@actions/exec';
 import {
   cacheDir,
@@ -7,7 +7,12 @@ import {
   extractZip,
 } from '@actions/tool-cache';
 
-import { getBinaryDirectory, getBinaryPath, getDownloadObject } from './utils';
+import {
+  getBinaryDirectory,
+  getBinaryPath,
+  getDownloadObject,
+  getLauncherDirectory,
+} from './utils';
 
 export async function run() {
   try {
@@ -47,6 +52,9 @@ export async function run() {
 
     // Expose the SDK by adding it to the PATH
     addPath(binaryDirectory);
+
+    // Expose SDK Launcher path
+    setOutput('launcher', getLauncherDirectory(binaryDirectory));
   } catch (error) {
     if (error instanceof Error) {
       setFailed(error.message);

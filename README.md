@@ -84,6 +84,19 @@ See [action.yml](action.yml)
     web: false
 ```
 
+## Outputs
+
+### `launcher`
+
+[Ren'Py launcher](https://www.renpy.org/doc/html/cli.html#launcher-commands) path:
+
+```yaml
+- uses: remarkablegames/setup-renpy@v1
+  id: renpy
+
+- run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .
+```
+
 ## Contributions
 
 Contributions are welcome!

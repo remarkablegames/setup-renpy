@@ -1,6 +1,11 @@
 import os from 'os';
 
-import { getBinaryPath, getDownloadObject } from './utils';
+import {
+  getBinaryDirectory,
+  getBinaryPath,
+  getDownloadObject,
+  getLauncherDirectory,
+} from './utils';
 
 jest.mock('os');
 const mockedOs = jest.mocked(os);
@@ -48,8 +53,16 @@ describe('getBinaryPath', () => {
 });
 
 describe('getBinaryDirectory', () => {
-  it('returns CLI directory', () => {
+  it.each(architectures)('returns CLI directory for arch %p', (arch) => {
+    mockedOs.arch.mockReturnValueOnce(arch);
     const directory = 'directory';
-    expect(getBinaryPath(directory, version)).toMatchSnapshot();
+    expect(getBinaryDirectory(directory, version)).toMatchSnapshot();
+  });
+});
+
+describe('getLauncherDirectory', () => {
+  it('returns launcher directory', () => {
+    const directory = 'directory';
+    expect(getLauncherDirectory(directory)).toMatchSnapshot();
   });
 });

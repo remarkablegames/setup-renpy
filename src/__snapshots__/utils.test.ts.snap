@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getBinaryDirectory returns CLI directory 1`] = `"directory/8.2.1.sh"`;
+exports[`getBinaryDirectory returns CLI directory for arch "arm" 1`] = `"directory/renpy-8.2.1-sdkarm"`;
+
+exports[`getBinaryDirectory returns CLI directory for arch "x32" 1`] = `"directory/renpy-8.2.1-sdk"`;
+
+exports[`getBinaryDirectory returns CLI directory for arch "x64" 1`] = `"directory/renpy-8.2.1-sdk"`;
 
 exports[`getBinaryPath when OS is "darwin" returns CLI filepath 1`] = `"directory/name.sh"`;
 
@@ -88,3 +92,5 @@ exports[`getDownloadObject when OS is "win32" and arch is "x64" gets download ob
   "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
 }
 `;
+
+exports[`getLauncherDirectory returns launcher directory 1`] = `"directory/launcher"`;
