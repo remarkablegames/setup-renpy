@@ -4,7 +4,7 @@
 [![build](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml/badge.svg)](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/remarkablegames/setup-renpy/graph/badge.svg?token=xTSeP1FvRP)](https://codecov.io/gh/remarkablegames/setup-renpy)
 
-📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html).
+📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html) on Linux or macOS (Windows is unsupported).
 
 ## Quick Start
 
@@ -87,9 +87,6 @@ This is a shorthand command for:
 
 - run: renpy-cli ${{ steps.renpy.outputs.launcher }}
 ```
-
-> [!NOTE]
-> The launcher CLI is only available in Linux and macOS.
 
 ### `rapt`
 
