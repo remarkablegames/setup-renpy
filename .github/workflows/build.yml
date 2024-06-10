@@ -106,7 +106,6 @@ jobs:
         run: renpy-cli --help
 
       - name: Set projects directory
-        if: matrix.os != 'windows-latest'
         run: renpy-launcher set_projects_directory ..
 
       - name: Set project
@@ -116,7 +115,6 @@ jobs:
         run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
 
       - name: Build web
-        if: matrix.os != 'windows-latest'
         run: |
           renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
           ls dist dist.zip
