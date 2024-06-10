@@ -11,15 +11,13 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
 
     steps:
       - name: Release Please
-        uses: google-github-actions/release-please-action@v4
+        uses: googleapis/release-please-action@v4
+        id: release
         with:
           release-type: node
-        id: release
 
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created }}
