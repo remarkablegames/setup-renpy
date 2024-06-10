@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/remarkablegames/setup-renpy/compare/v1.1.1...v1.1.2) (2024-06-10)
+
+
+### Bug Fixes
+
+* extract addons to the correct directory ([b967ca2](https://github.com/remarkablegames/setup-renpy/commit/b967ca2ed76647c0fb94fd508e144ee5e3fdd961))
+
 ## [1.1.1](https://github.com/remarkablegames/setup-renpy/compare/v1.1.0...v1.1.1) (2024-06-10)
 
 
