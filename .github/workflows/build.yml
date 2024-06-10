@@ -95,5 +95,16 @@ jobs:
       - name: Show help
         run: renpy-cli --help
 
+      - name: Set projects directory
+        run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_projects_directory ..
+
       - name: Set project
         run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .
+
+      - name: Check web support
+        if: matrix.os != 'windows-latest'
+        run: |
+          if [[ ! -f ${{ steps.renpy.outputs.launcher}}/../web/index.html ]]; then
+            echo 'Web Platform Support (Renpyweb) not found.'
+            exit 1
+          fi
