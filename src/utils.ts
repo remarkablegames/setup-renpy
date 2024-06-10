@@ -52,3 +52,14 @@ export function getBinaryDirectory(directory: string, version: string) {
 export function getLauncherDirectory(directory: string) {
   return join(directory, 'launcher');
 }
+
+/**
+ * Gets addon directory.
+ *
+ * @param directory - Directory
+ * @param addon - Addon
+ * @returns - Addon directory
+ */
+export function getAddonDirectory(directory: string, addon: string) {
+  return join(directory, addon);
+}

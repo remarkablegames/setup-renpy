@@ -8,6 +8,7 @@ import {
 } from '@actions/tool-cache';
 
 import {
+  getAddonDirectory,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -37,12 +38,13 @@ export async function run() {
 
     // Add Android/iOS/Web support
     const addons = (['rapt', 'renios', 'web'] as const).filter(
-      (platform) => getInput(platform) === 'true',
+      (addon) => getInput(addon) === 'true',
     );
+
     await Promise.all(
-      addons.map((platform) =>
-        downloadTool(download[platform], binaryDirectory).then((downloadPath) =>
-          extractZip(downloadPath, binaryDirectory),
+      addons.map((addon) =>
+        downloadTool(download[addon]).then((downloadPath) =>
+          extractZip(downloadPath, getAddonDirectory(binaryDirectory, addon)),
         ),
       ),
     );
