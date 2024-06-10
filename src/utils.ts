@@ -52,3 +52,14 @@ export function getBinaryDirectory(directory: string, version: string) {
 export function getLauncherDirectory(directory: string) {
   return join(directory, 'launcher');
 }
+
+/**
+ * Gets launcher path.
+ *
+ * @param directory - Directory
+ * @param name - Binary name
+ * @returns - Launcher path
+ */
+export function getLauncherPath(directory: string, name: string) {
+  return join(directory, name);
+}

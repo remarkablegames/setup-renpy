@@ -12,13 +12,15 @@ import {
   getBinaryPath,
   getDownloadObject,
   getLauncherDirectory,
+  getLauncherPath,
 } from './utils';
 
 export async function run() {
   try {
     // Get the version and name of the SDK to be installed
     const version = getInput('cli-version');
-    const name = getInput('cli-name');
+    const cliName = getInput('cli-name');
+    const launcherName = getInput('launcher-name');
 
     // Download the specific version of the SDK (e.g., tarball/zipball)
     const download = getDownloadObject(version);
@@ -32,14 +34,16 @@ export async function run() {
     );
 
     // Rename the binary
-    const binaryPath = getBinaryPath(binaryDirectory, name).replace('.sh', '');
+    const binaryPath = getBinaryPath(binaryDirectory, cliName).replace(
+      '.sh',
+      '',
+    );
     await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
 
     // Add Android/iOS/Web support
     const addons = (['rapt', 'renios', 'web'] as const).filter(
       (addon) => getInput(addon) === 'true',
     );
-
     await Promise.all(
       addons.map((addon) =>
         downloadTool(download[addon]).then((downloadPath) =>
@@ -48,14 +52,25 @@ export async function run() {
       ),
     );
 
-    // Cache the SDK
-    await cacheDir(binaryDirectory, [name, ...addons].join('_'), version);
+    // Expose SDK Launcher path
+    const launcherDirectory = getLauncherDirectory(binaryDirectory);
+    setOutput('launcher', launcherDirectory);
+
+    // Create the launcher binary
+    const launcherPath = getLauncherPath(binaryDirectory, launcherName);
+    await exec('touch', [launcherPath]);
+    await exec('echo', [
+      `${binaryPath} ${launcherDirectory} "$@"`,
+      '>',
+      launcherPath,
+    ]);
+    await exec('chmod', ['+x', launcherPath]);
 
     // Expose the SDK by adding it to the PATH
     addPath(binaryDirectory);
 
-    // Expose SDK Launcher path
-    setOutput('launcher', getLauncherDirectory(binaryDirectory));
+    // Cache the SDK
+    await cacheDir(binaryDirectory, [cliName, ...addons].join('_'), version);
   } catch (error) {
     if (error instanceof Error) {
       setFailed(error.message);

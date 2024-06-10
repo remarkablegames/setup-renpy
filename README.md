@@ -31,28 +31,53 @@ See [action.yml](action.yml)
 
 ## Inputs
 
-### `cli-version`
-
-**Optional**: The CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.2.1`](https://www.renpy.org/latest.html):
-
-```yaml
-- uses: remarkablegames/setup-renpy@v1
-  with:
-    cli-version: 8.2.1
-```
-
 ### `cli-name`
 
-**Optional**: The CLI name. Defaults to `renpy-cli`:
+**Optional**: CLI name. Defaults to `renpy-cli`:
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
   with:
     cli-name: renpy-cli
+
+- run: renpy-cli
 ```
 
-> [!NOTE]
-> The CLI name cannot be `renpy` due to the SDK directory structure.
+> [!WARNING]
+> CLI name cannot be `renpy` due to the SDK structure.
+
+### `cli-version`
+
+**Optional**: CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.2.1`](https://www.renpy.org/latest.html):
+
+```yaml
+- uses: remarkablegames/setup-renpy@v1
+  with:
+    cli-version: 8.2.1
+
+- run: renpy-cli --version
+```
+
+### `launcher-name`
+
+**Optional**: Launcher name. Defaults to `renpy-launcher`:
+
+```yaml
+- uses: remarkablegames/setup-renpy@v1
+  with:
+    launcher-name: renpy-launcher
+
+- run: renpy-launcher
+```
+
+This is a shorthand command for:
+
+```yaml
+- uses: remarkablegames/setup-renpy@v1
+  id: renpy
+
+- run: renpy-cli ${{ steps.renpy.outputs.launcher }}
+```
 
 ### `rapt`
 
@@ -94,8 +119,17 @@ See [action.yml](action.yml)
 - uses: remarkablegames/setup-renpy@v1
   id: renpy
 
-- run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .
+- run: renpy-cli ${{ steps.renpy.outputs.launcher }}
 ```
+
+> [!TIP]
+> Prefer using `renpy-launcher`:
+>
+> ```yaml
+> - uses: remarkablegames/setup-renpy@v1
+>
+> - run: renpy-launcher
+> ```
 
 ## Contributions
 

@@ -19,8 +19,9 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-const name = 'cli-name';
+const cliName = 'cli-name';
 const version = '1.2.3';
+const launcherName = 'launcher-name';
 const pathToTarball = 'path/to/tarball';
 const pathToCLI = 'path/to/cli';
 
@@ -37,7 +38,9 @@ describe.each([
         case 'cli-version':
           return version;
         case 'cli-name':
-          return name;
+          return cliName;
+        case 'launcher-name':
+          return launcherName;
         default:
           return '';
       }
@@ -61,11 +64,32 @@ describe.each([
 
     expect(mockedExec.exec).toHaveBeenCalledWith('mv', [
       expect.stringContaining('renpy'),
-      expect.stringContaining(name),
+      expect.stringContaining(cliName),
+    ]);
+
+    expect(mockedExec.exec).toHaveBeenCalledWith('touch', [
+      expect.stringContaining(launcherName),
+    ]);
+
+    expect(mockedExec.exec).toHaveBeenCalledWith('echo', [
+      expect.stringMatching(/.+cli-name(.exe)? .+launcher .+[$@].+/),
+      '>',
+      expect.stringContaining(launcherName),
+    ]);
+
+    expect(mockedExec.exec).toHaveBeenCalledWith('chmod', [
+      '+x',
+      expect.stringContaining(launcherName),
     ]);
 
     const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
-    expect(mockedTc.cacheDir).toHaveBeenCalledWith(sdkDirectory, name, version);
+
+    expect(mockedTc.cacheDir).toHaveBeenCalledWith(
+      sdkDirectory,
+      cliName,
+      version,
+    );
+
     expect(mockedCore.addPath).toHaveBeenCalledWith(sdkDirectory);
 
     expect(mockedCore.setOutput).toHaveBeenCalledWith(
@@ -89,7 +113,7 @@ describe.each([
         case 'cli-version':
           return version;
         case 'cli-name':
-          return name;
+          return cliName;
         case 'rapt':
           return String(inputs.rapt);
         case 'renios':

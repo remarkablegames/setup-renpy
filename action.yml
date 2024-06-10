@@ -2,14 +2,18 @@ name: setup-renpy
 description: Set up GitHub Actions workflow with Ren'Py CLI
 author: remarkablemark
 inputs:
-  cli-version:
-    description: CLI version
-    required: false
-    default: 8.2.1
   cli-name:
     description: CLI name
     required: false
     default: renpy-cli
+  cli-version:
+    description: CLI version
+    required: false
+    default: 8.2.1
+  launcher-name:
+    description: Launcher name
+    required: false
+    default: renpy-launcher
   rapt:
     description: Android Support (RAPT)
     required: false
