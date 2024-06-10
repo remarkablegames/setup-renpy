@@ -72,6 +72,7 @@ jobs:
 
       - name: Run action
         uses: ./
+        id: renpy
         with:
           cli-version: ${{ matrix.version }}
 
@@ -90,3 +91,6 @@ jobs:
 
       - name: Show help
         run: renpy-cli --help
+
+      - name: Set project
+        run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .

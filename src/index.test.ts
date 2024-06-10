@@ -67,6 +67,11 @@ describe.each([
     const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
     expect(mockedTc.cacheDir).toHaveBeenCalledWith(sdkDirectory, name, version);
     expect(mockedCore.addPath).toHaveBeenCalledWith(sdkDirectory);
+
+    expect(mockedCore.setOutput).toHaveBeenCalledWith(
+      'launcher',
+      `${sdkDirectory}/launcher`,
+    );
   });
 });
 

@@ -42,3 +42,13 @@ export function getBinaryDirectory(directory: string, version: string) {
     `renpy-${version}-sdk${arch().includes('arm') ? 'arm' : ''}`,
   );
 }
+
+/**
+ * Gets launcher directory.
+ *
+ * @param directory - Directory
+ * @returns - Launcher directory
+ */
+export function getLauncherDirectory(directory: string) {
+  return join(directory, 'launcher');
+}
