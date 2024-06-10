@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/remarkablegames/setup-renpy/compare/v1.0.0...v1.1.0) (2024-06-10)
+
+
+### Features
+
+* **action:** expose launcher path in outputs ([aeaceba](https://github.com/remarkablegames/setup-renpy/commit/aeaceba33c120ec0de54dfb4b3e1d31d4f224dc6))
+
 ## 1.0.0 (2024-06-09)
 
 
