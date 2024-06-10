@@ -112,12 +112,11 @@ describe.each([
       if (value) {
         expect(mockedTc.downloadTool).toHaveBeenCalledWith(
           `https://www.renpy.org/dl/${version}/renpy-${version}-${key}.zip`,
-          `${pathToCLI}/renpy-${version}-sdk`,
         );
 
         expect(mockedTc.extractZip).toHaveBeenCalledWith(
           pathToTarball,
-          `${pathToCLI}/renpy-${version}-sdk`,
+          `${pathToCLI}/renpy-${version}-sdk/${key}`,
         );
       }
     });

@@ -75,6 +75,9 @@ jobs:
         id: renpy
         with:
           cli-version: ${{ matrix.version }}
+          rapt: true
+          renios: true
+          web: true
 
       - name: Locate binary
         run: command -v renpy-cli
