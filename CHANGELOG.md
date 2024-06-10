@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/remarkablegames/setup-renpy/compare/v1.1.2...v1.2.0) (2024-06-10)
+
+
+### Features
+
+* add launcher binary and input `launcher-name` ([b0fd378](https://github.com/remarkablegames/setup-renpy/commit/b0fd37857113f581666debae66575e213e525c92))
+
 ## [1.1.2](https://github.com/remarkablegames/setup-renpy/compare/v1.1.1...v1.1.2) (2024-06-10)
 
 
