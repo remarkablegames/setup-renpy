@@ -140,8 +140,9 @@ This is a shorthand command for:
 > - run: renpy-launcher
 > ```
 
-## Examples
+## Resources
 
+- [Blog post](https://remarkablegames.org/posts/setup-renpy-cli-github-actions/)
 - [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template)
 
 ## Contributions
