@@ -94,5 +94,3 @@ exports[`getDownloadObject when OS is "win32" and arch is "x64" gets download ob
 `;
 
 exports[`getLauncherDirectory returns launcher directory 1`] = `"directory/launcher"`;
-
-exports[`getLauncherPath returns launcher path 1`] = `"directory/name"`;

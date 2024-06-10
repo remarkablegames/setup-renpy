@@ -4,11 +4,17 @@ import * as tc from '@actions/tool-cache';
 import os from 'os';
 
 import { run } from '.';
+import { createLauncherBinary } from './utils';
 
 jest.mock('@actions/core');
 jest.mock('@actions/exec');
 jest.mock('@actions/tool-cache');
 jest.mock('os');
+
+jest.mock('./utils', () => ({
+  ...jest.requireActual('./utils'),
+  createLauncherBinary: jest.fn(),
+}));
 
 const mockedCore = jest.mocked(core);
 const mockedExec = jest.mocked(exec);
@@ -67,22 +73,13 @@ describe.each([
       expect.stringContaining(cliName),
     ]);
 
-    expect(mockedExec.exec).toHaveBeenCalledWith('touch', [
-      expect.stringContaining(launcherName),
-    ]);
-
-    expect(mockedExec.exec).toHaveBeenCalledWith('echo', [
-      expect.stringMatching(/.+cli-name(.exe)? .+launcher .+[$@].+/),
-      '>',
-      expect.stringContaining(launcherName),
-    ]);
-
-    expect(mockedExec.exec).toHaveBeenCalledWith('chmod', [
-      '+x',
-      expect.stringContaining(launcherName),
-    ]);
-
     const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
+
+    expect(createLauncherBinary).toHaveBeenCalledWith(
+      sdkDirectory,
+      launcherName,
+      expect.stringContaining(cliName),
+    );
 
     expect(mockedTc.cacheDir).toHaveBeenCalledWith(
       sdkDirectory,

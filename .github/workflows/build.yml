@@ -86,6 +86,12 @@ jobs:
           command -v renpy-cli
           command -v renpy-launcher
 
+      - name: Show launcher
+        if: matrix.os != 'windows-latest'
+        run: |
+          ls $(command -v renpy-launcher)
+          cat $(command -v renpy-launcher)
+
       - name: Check version
         if: matrix.os != 'windows-latest'
         run: |
@@ -107,3 +113,8 @@ jobs:
 
       - name: Check web support
         run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
+
+      - name: Build web
+        run: |
+          renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
+          ls dist dist.zip

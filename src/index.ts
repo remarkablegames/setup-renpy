@@ -8,11 +8,11 @@ import {
 } from '@actions/tool-cache';
 
 import {
+  createLauncherBinary,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
   getLauncherDirectory,
-  getLauncherPath,
 } from './utils';
 
 export async function run() {
@@ -57,14 +57,7 @@ export async function run() {
     setOutput('launcher', launcherDirectory);
 
     // Create the launcher binary
-    const launcherPath = getLauncherPath(binaryDirectory, launcherName);
-    await exec('touch', [launcherPath]);
-    await exec('echo', [
-      `${binaryPath} ${launcherDirectory} "$@"`,
-      '>',
-      launcherPath,
-    ]);
-    await exec('chmod', ['+x', launcherPath]);
+    await createLauncherBinary(binaryDirectory, launcherName, binaryPath);
 
     // Expose the SDK by adding it to the PATH
     addPath(binaryDirectory);

@@ -88,6 +88,9 @@ This is a shorthand command for:
 - run: renpy-cli ${{ steps.renpy.outputs.launcher }}
 ```
 
+> [!NOTE]
+> The launcher CLI is only available in Linux and macOS.
+
 ### `rapt`
 
 **Optional**: Android Support (RAPT). Defaults to `false`:

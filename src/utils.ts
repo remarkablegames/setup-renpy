@@ -1,3 +1,5 @@
+import { exec } from '@actions/exec';
+import { writeFile } from 'fs/promises';
 import { arch, platform } from 'os';
 import { join } from 'path';
 
@@ -54,12 +56,21 @@ export function getLauncherDirectory(directory: string) {
 }
 
 /**
- * Gets launcher path.
+ * Creates launcher binary.
  *
- * @param directory - Directory
- * @param name - Binary name
- * @returns - Launcher path
+ * @param directory - Binary directory
+ * @param name - Launcher name
+ * @param cliPath - Binary path
  */
-export function getLauncherPath(directory: string, name: string) {
-  return join(directory, name);
+export async function createLauncherBinary(
+  directory: string,
+  name: string,
+  cliPath: string,
+) {
+  const launcherPath = join(directory, name);
+  await writeFile(
+    launcherPath,
+    `${cliPath} ${getLauncherDirectory(directory)} "$@"`,
+  );
+  await exec('chmod', ['+x', launcherPath]);
 }

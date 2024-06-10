@@ -1,12 +1,20 @@
+import * as exec from '@actions/exec';
+import fs from 'fs/promises';
 import os from 'os';
 
 import {
+  createLauncherBinary,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
   getLauncherDirectory,
-  getLauncherPath,
 } from './utils';
+
+jest.mock('@actions/exec');
+const mockedExec = jest.mocked(exec);
+
+jest.mock('fs/promises');
+const mockedFs = jest.mocked(fs);
 
 jest.mock('os');
 const mockedOs = jest.mocked(os);
@@ -69,9 +77,15 @@ describe('getLauncherDirectory', () => {
   });
 });
 
-describe('getLauncherPath', () => {
-  it('returns launcher path', () => {
-    const directory = 'directory';
-    expect(getLauncherPath(directory, name)).toMatchSnapshot();
+describe('createLauncherBinary', () => {
+  it('creates launcher binary', async () => {
+    const cliPath = 'cliPath';
+    const launcherPath = `${directory}/${name}`;
+    await createLauncherBinary(directory, name, cliPath);
+    expect(mockedFs.writeFile).toHaveBeenCalledWith(
+      launcherPath,
+      `${cliPath} ${directory}/launcher "$@"`,
+    );
+    expect(mockedExec.exec).toHaveBeenCalledWith('chmod', ['+x', launcherPath]);
   });
 });
