@@ -5,6 +5,7 @@ import {
   getBinaryPath,
   getDownloadObject,
   getLauncherDirectory,
+  getLauncherPath,
 } from './utils';
 
 jest.mock('os');
@@ -23,12 +24,15 @@ const table = platforms.reduce(
 
 const version = '8.2.1';
 
+beforeEach(() => {
+  jest.resetAllMocks();
+});
+
 describe('getDownloadObject', () => {
   describe.each(table)('when OS is %p and arch is %p', (os, arch) => {
     beforeEach(() => {
-      jest.resetAllMocks();
-      mockedOs.platform.mockReturnValueOnce(os as NodeJS.Platform);
-      mockedOs.arch.mockReturnValueOnce(arch);
+      mockedOs.platform.mockReturnValue(os as NodeJS.Platform);
+      mockedOs.arch.mockReturnValue(arch);
     });
 
     it('gets download object', () => {
@@ -37,16 +41,16 @@ describe('getDownloadObject', () => {
   });
 });
 
+const directory = 'directory';
+const name = 'name';
+
 describe('getBinaryPath', () => {
   describe.each(platforms)('when OS is %p', (os) => {
     beforeEach(() => {
-      jest.resetAllMocks();
-      mockedOs.platform.mockReturnValueOnce(os);
+      mockedOs.platform.mockReturnValue(os);
     });
 
     it('returns CLI filepath', () => {
-      const directory = 'directory';
-      const name = 'name';
       expect(getBinaryPath(directory, name)).toMatchSnapshot();
     });
   });
@@ -55,14 +59,19 @@ describe('getBinaryPath', () => {
 describe('getBinaryDirectory', () => {
   it.each(architectures)('returns CLI directory for arch %p', (arch) => {
     mockedOs.arch.mockReturnValueOnce(arch);
-    const directory = 'directory';
     expect(getBinaryDirectory(directory, version)).toMatchSnapshot();
   });
 });
 
 describe('getLauncherDirectory', () => {
   it('returns launcher directory', () => {
-    const directory = 'directory';
     expect(getLauncherDirectory(directory)).toMatchSnapshot();
+  });
+});
+
+describe('getLauncherPath', () => {
+  it('returns launcher path', () => {
+    const directory = 'directory';
+    expect(getLauncherPath(directory, name)).toMatchSnapshot();
   });
 });
