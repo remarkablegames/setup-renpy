@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/remarkablegames/setup-renpy/compare/v1.2.0...v1.2.1) (2024-06-10)
+
+
+### Bug Fixes
+
+* write content to launcher binary ([a6093de](https://github.com/remarkablegames/setup-renpy/commit/a6093de4afdc6808decc865a4f4a12cbd136f20c))
+
 ## [1.2.0](https://github.com/remarkablegames/setup-renpy/compare/v1.1.2...v1.2.0) (2024-06-10)
 
 
