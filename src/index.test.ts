@@ -116,7 +116,7 @@ describe.each([
 
         expect(mockedTc.extractZip).toHaveBeenCalledWith(
           pathToTarball,
-          `${pathToCLI}/renpy-${version}-sdk/${key}`,
+          `${pathToCLI}/renpy-${version}-sdk`,
         );
       }
     });

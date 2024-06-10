@@ -1,11 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getAddonDirectory returns addon directory for "rapt" 1`] = `"directory/rapt"`;
-
-exports[`getAddonDirectory returns addon directory for "renios" 1`] = `"directory/renios"`;
-
-exports[`getAddonDirectory returns addon directory for "web" 1`] = `"directory/web"`;
-
 exports[`getBinaryDirectory returns CLI directory for arch "arm" 1`] = `"directory/renpy-8.2.1-sdkarm"`;
 
 exports[`getBinaryDirectory returns CLI directory for arch "x32" 1`] = `"directory/renpy-8.2.1-sdk"`;

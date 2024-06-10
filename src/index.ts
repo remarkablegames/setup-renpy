@@ -8,7 +8,6 @@ import {
 } from '@actions/tool-cache';
 
 import {
-  getAddonDirectory,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -44,7 +43,7 @@ export async function run() {
     await Promise.all(
       addons.map((addon) =>
         downloadTool(download[addon]).then((downloadPath) =>
-          extractZip(downloadPath, getAddonDirectory(binaryDirectory, addon)),
+          extractZip(downloadPath, binaryDirectory),
         ),
       ),
     );

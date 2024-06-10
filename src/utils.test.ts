@@ -1,7 +1,6 @@
 import os from 'os';
 
 import {
-  getAddonDirectory,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -66,14 +65,4 @@ describe('getLauncherDirectory', () => {
     const directory = 'directory';
     expect(getLauncherDirectory(directory)).toMatchSnapshot();
   });
-});
-
-describe('getAddonDirectory', () => {
-  it.each(['rapt', 'renios', 'web'])(
-    'returns addon directory for %p',
-    (addon) => {
-      const directory = 'directory';
-      expect(getAddonDirectory(directory, addon)).toMatchSnapshot();
-    },
-  );
 });
