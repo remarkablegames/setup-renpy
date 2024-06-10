@@ -12,11 +12,20 @@
 name: Ren'Py CLI
 on: push
 jobs:
-  renpy-cli:
+  renpy:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Ren'Py
         uses: remarkablegames/setup-renpy@v1
+
+      - name: Get version
+        run: renpy-cli --version
+
+      - name: See help
+        run: renpy-cli --help
+
+      - name: Set projects directory
+        run: renpy-launcher set_projects_directory ..
 ```
 
 ## Usage
@@ -123,13 +132,17 @@ This is a shorthand command for:
 ```
 
 > [!TIP]
-> Prefer using `renpy-launcher`:
+> Prefer `renpy-launcher`:
 >
 > ```yaml
 > - uses: remarkablegames/setup-renpy@v1
 >
 > - run: renpy-launcher
 > ```
+
+## Examples
+
+- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template)
 
 ## Contributions
 
