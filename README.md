@@ -4,7 +4,7 @@
 [![build](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml/badge.svg)](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/remarkablegames/setup-renpy/graph/badge.svg?token=xTSeP1FvRP)](https://codecov.io/gh/remarkablegames/setup-renpy)
 
-📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html) on Linux or macOS (Windows is unsupported).
+📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html).
 
 ## Quick Start
 
@@ -53,7 +53,16 @@ See [action.yml](action.yml)
 ```
 
 > [!WARNING]
-> CLI name cannot be `renpy` due to the SDK structure.
+> On Linux and macOS, CLI name cannot be `renpy`.
+
+> [!INFO]
+> On Windows, CLI name is `renpy` and it cannot be changed:
+>
+> ```yaml
+> - uses: remarkablegames/setup-renpy@v1
+>
+> - run: renpy
+> ```
 
 ### `cli-version`
 
@@ -79,11 +88,16 @@ See [action.yml](action.yml)
 - run: renpy-launcher
 ```
 
-This is a shorthand command for:
+> [!INFO]
+> On Windows, `renpy-launcher` is unavailable.
+
+`renpy-launcher` is a shorthand for:
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
   id: renpy
+  with:
+    cli-name: renpy-cli
 
 - run: renpy-cli ${{ steps.renpy.outputs.launcher }}
 ```

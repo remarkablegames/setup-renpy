@@ -58,7 +58,7 @@ describe('getBinaryPath', () => {
       mockedOs.platform.mockReturnValue(os);
     });
 
-    it('returns CLI filepath', () => {
+    it('returns CLI path', () => {
       expect(getBinaryPath(directory, name)).toMatchSnapshot();
     });
   });

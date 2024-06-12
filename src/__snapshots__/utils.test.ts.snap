@@ -6,11 +6,11 @@ exports[`getBinaryDirectory returns CLI directory for arch "x32" 1`] = `"directo
 
 exports[`getBinaryDirectory returns CLI directory for arch "x64" 1`] = `"directory/renpy-8.2.1-sdk"`;
 
-exports[`getBinaryPath when OS is "darwin" returns CLI filepath 1`] = `"directory/name.sh"`;
+exports[`getBinaryPath when OS is "darwin" returns CLI path 1`] = `"directory/name.sh"`;
 
-exports[`getBinaryPath when OS is "linux" returns CLI filepath 1`] = `"directory/name.sh"`;
+exports[`getBinaryPath when OS is "linux" returns CLI path 1`] = `"directory/name.sh"`;
 
-exports[`getBinaryPath when OS is "win32" returns CLI filepath 1`] = `"directory/name.exe"`;
+exports[`getBinaryPath when OS is "win32" returns CLI path 1`] = `"directory/name.sh"`;
 
 exports[`getDownloadObject when OS is "darwin" and arch is "arm" gets download object 1`] = `
 {

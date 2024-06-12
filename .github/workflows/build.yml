@@ -86,6 +86,13 @@ jobs:
           command -v renpy-cli
           command -v renpy-launcher
 
+      - name: Locate Windows executable
+        if: matrix.os == 'windows-latest'
+        run: |
+          command -v renpy
+          renpy --version
+          renpy --help
+
       - name: Show launcher
         if: matrix.os != 'windows-latest'
         run: |
@@ -114,7 +121,15 @@ jobs:
       - name: Check web support
         run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
 
-      - name: Build web
+      - name: Build web on ${{ matrix.os }}
+        if: matrix.os != 'windows-latest'
         run: |
           renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
+          ls dist dist.zip
+
+      - name: Build web on ${{ matrix.os }}
+        if: matrix.os == 'windows-latest'
+        run: |
+          ls ${{ steps.renpy.outputs.launcher }}\..\the_question
+          renpy ${{ steps.renpy.outputs.launcher }} web_build ${{ steps.renpy.outputs.launcher }}\..\the_question --destination dist
           ls dist dist.zip
