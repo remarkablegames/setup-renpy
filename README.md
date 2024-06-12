@@ -55,7 +55,7 @@ See [action.yml](action.yml)
 > [!WARNING]
 > On Linux and macOS, CLI name cannot be `renpy`.
 
-> [!INFO]
+> [!NOTE]
 > On Windows, CLI name is `renpy` and it cannot be changed:
 >
 > ```yaml
@@ -146,7 +146,7 @@ See [action.yml](action.yml)
 ```
 
 > [!TIP]
-> Prefer `renpy-launcher`:
+> Prefer `renpy-launcher` on Linux and macOS:
 >
 > ```yaml
 > - uses: remarkablegames/setup-renpy@v1
