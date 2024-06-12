@@ -1,6 +1,6 @@
 import { exec } from '@actions/exec';
 import { writeFile } from 'fs/promises';
-import { arch, platform } from 'os';
+import { arch } from 'os';
 import { join } from 'path';
 
 /**
@@ -21,14 +21,14 @@ export function getDownloadObject(version: string) {
 }
 
 /**
- * Gets CLI path.
+ * Gets CLI path (excludes Windows `.exe`).
  *
  * @param directory - Directory
  * @param name - CLI name
  * @returns - Binary path
  */
 export function getBinaryPath(directory: string, name: string) {
-  return join(directory, name + (platform() === 'win32' ? '.exe' : '.sh'));
+  return join(directory, `${name}.sh`);
 }
 
 /**
