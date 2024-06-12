@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/remarkablegames/setup-renpy/compare/v1.2.1...v1.2.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* enable Windows support for renpy executable ([7662fcf](https://github.com/remarkablegames/setup-renpy/commit/7662fcf334a7e922a5f5544a502164ab1edfe5ad))
+
 ## [1.2.1](https://github.com/remarkablegames/setup-renpy/compare/v1.2.0...v1.2.1) (2024-06-10)
 
 
