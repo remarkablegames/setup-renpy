@@ -88,7 +88,7 @@ See [action.yml](action.yml)
 - run: renpy-launcher
 ```
 
-> [!INFO]
+> [!IMPORTANT]
 > On Windows, `renpy-launcher` is unavailable.
 
 `renpy-launcher` is a shorthand for:
