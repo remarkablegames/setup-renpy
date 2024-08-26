@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/remarkablegames/setup-renpy/compare/v1.2.2...v1.3.0) (2024-08-26)
+
+
+### Features
+
+* **action:** bump Ren'Py CLI version from 8.2.1 to 8.3.0 ([79fe62b](https://github.com/remarkablegames/setup-renpy/commit/79fe62beb7ca12581630f448a387d232e744fab6))
+
 ## [1.2.2](https://github.com/remarkablegames/setup-renpy/compare/v1.2.1...v1.2.2) (2024-06-12)
 
 
