@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/remarkablegames/setup-renpy/compare/v1.3.0...v1.3.1) (2024-08-29)
+
+
+### Bug Fixes
+
+* **action:** downgrade Ren'Py CLI version from 8.3.0 to 8.2.3 ([12ca048](https://github.com/remarkablegames/setup-renpy/commit/12ca048b2e971e6408099283c11c033502f6d25f))
+
 ## [1.3.0](https://github.com/remarkablegames/setup-renpy/compare/v1.2.2...v1.3.0) (2024-08-26)
 
 
