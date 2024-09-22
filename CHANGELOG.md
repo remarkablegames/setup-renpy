@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/remarkablegames/setup-renpy/compare/v1.3.1...v1.4.0) (2024-09-22)
+
+
+### Features
+
+* find and use tool cache if it exists ([0cc11ff](https://github.com/remarkablegames/setup-renpy/commit/0cc11ffe4cd46ab6087f0034952997b20102226d))
+
 ## [1.3.1](https://github.com/remarkablegames/setup-renpy/compare/v1.3.0...v1.3.1) (2024-08-29)
 
 
