@@ -156,12 +156,16 @@ See [action.yml](action.yml)
 
 ## Resources
 
-- [Blog post](https://remarkablegames.org/posts/setup-renpy-cli-github-actions/)
-- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template)
+- [Article](https://remarkablegames.org/posts/setup-renpy-cli-github-actions/)
+
+## Examples
+
+- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template/blob/master/.github/workflows/build.yml)
+- [remarkablegames/renpy-examples](https://github.com/remarkablegames/renpy-examples/blob/master/.github/workflows/lint.yml)
 
 ## Contributions
 
-Contributions are welcome!
+Contributions are welcome! 👋
 
 ## License
 
