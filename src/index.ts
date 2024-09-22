@@ -5,6 +5,7 @@ import {
   downloadTool,
   extractTar,
   extractZip,
+  find,
 } from '@actions/tool-cache';
 
 import {
@@ -15,46 +16,56 @@ import {
   getLauncherDirectory,
 } from './utils';
 
+const ADDONS = ['rapt', 'renios', 'web'] as const;
+
 export async function run() {
   try {
-    // Get the version and name of the SDK to be installed
-    const version = getInput('cli-version');
+    // Get the name and version of the SDK
     const cliName = getInput('cli-name');
     const launcherName = getInput('launcher-name');
+    const version = getInput('cli-version');
+    const addons = ADDONS.filter((addon) => getInput(addon) === 'true');
+    const toolName = [cliName, ...addons].join('_');
 
-    // Download the specific version of the SDK (e.g., tarball/zipball)
-    const download = getDownloadObject(version);
-    const pathToTarball = await downloadTool(download.sdk);
+    // Find previously cached directory (if applicable)
+    let binaryDirectory = find(toolName, version);
+    const isCached = Boolean(binaryDirectory);
 
-    // Extract the tarball/zipball onto the host runner
-    const extract = download.sdk.endsWith('.zip') ? extractZip : extractTar;
-    const binaryDirectory = getBinaryDirectory(
-      await extract(pathToTarball),
-      version,
-    );
+    if (!isCached) {
+      // Download the specific version of the SDK (e.g., tarball/zipball)
+      const download = getDownloadObject(version);
+      const pathToTarball = await downloadTool(download.sdk);
 
-    // Rename the binary
-    const binaryPath = getBinaryPath(binaryDirectory, cliName).replace(
-      '.sh',
-      '',
-    );
-    await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
+      // Extract the tarball/zipball onto the host runner
+      const extract = download.sdk.endsWith('.zip') ? extractZip : extractTar;
+      binaryDirectory = getBinaryDirectory(
+        await extract(pathToTarball),
+        version,
+      );
 
-    // Add Android/iOS/Web support
-    const addons = (['rapt', 'renios', 'web'] as const).filter(
-      (addon) => getInput(addon) === 'true',
-    );
-    await Promise.all(
-      addons.map((addon) =>
-        downloadTool(download[addon]).then((downloadPath) =>
-          extractZip(downloadPath, binaryDirectory),
+      // Add Android/iOS/Web support
+      await Promise.all(
+        addons.map((addon) =>
+          downloadTool(download[addon]).then((downloadPath) =>
+            extractZip(downloadPath, binaryDirectory),
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     // Expose SDK Launcher path
     const launcherDirectory = getLauncherDirectory(binaryDirectory);
     setOutput('launcher', launcherDirectory);
+
+    const binaryPath = getBinaryPath(binaryDirectory, cliName).replace(
+      '.sh',
+      '',
+    );
+
+    if (!isCached) {
+      // Rename the binary
+      await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
+    }
 
     // Create the launcher binary
     await createLauncherBinary(binaryDirectory, launcherName, binaryPath);
@@ -63,7 +74,9 @@ export async function run() {
     addPath(binaryDirectory);
 
     // Cache the SDK
-    await cacheDir(binaryDirectory, [cliName, ...addons].join('_'), version);
+    if (!isCached) {
+      await cacheDir(binaryDirectory, toolName, version);
+    }
   } catch (error) {
     if (error instanceof Error) {
       setFailed(error.message);
