@@ -22,6 +22,7 @@ const compat = new FlatCompat({
 
 export default [
   includeIgnoreFile(gitignorePath),
+
   {
     ignores: ['dist/'],
   },
@@ -36,8 +37,8 @@ export default [
 
     plugins: {
       '@typescript-eslint': typescriptEslint,
-      prettier,
       'simple-import-sort': simpleImportSort,
+      prettier,
       tsdoc,
     },
 
