@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/remarkablegames/setup-renpy/compare/v1.4.2...v1.4.3) (2024-10-07)
+
+
+### Build System
+
+* **deps:** bump @actions/core from 1.11.0 to 1.11.1 ([#120](https://github.com/remarkablegames/setup-renpy/issues/120)) ([c83931c](https://github.com/remarkablegames/setup-renpy/commit/c83931c50b5251627d8b9dce8a2449bfd99261c9))
+
 ## [1.4.2](https://github.com/remarkablegames/setup-renpy/compare/v1.4.1...v1.4.2) (2024-10-03)
 
 
