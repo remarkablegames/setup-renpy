@@ -1,0 +1,110 @@
+name: test
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Lint codebase
+        run: npm run lint
+
+      - name: Check type
+        run: npm run lint:tsc
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Codecov
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # action should work on a clean machine without building
+  integration:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        version: [7.7.1, 8.2.3]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run action
+        uses: ./
+
+      - name: Run action with inputs
+        uses: ./
+        id: renpy
+        with:
+          cli-version: ${{ matrix.version }}
+          rapt: true
+          renios: true
+          web: true
+
+      - name: Locate binaries
+        run: |
+          command -v renpy-cli
+          command -v renpy-launcher
+
+      - name: Locate Windows executable
+        if: matrix.os == 'windows-latest'
+        run: |
+          command -v renpy
+          renpy --version
+          renpy --help
+
+      - name: Show launcher
+        if: matrix.os != 'windows-latest'
+        run: |
+          ls $(command -v renpy-launcher)
+          cat $(command -v renpy-launcher)
+
+      - name: Check version
+        if: matrix.os != 'windows-latest'
+        run: |
+          renpy-cli --version &> RENPY_VERSION
+          if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
+            echo 'Version does not match. See version below:'
+            renpy-cli --version
+            exit 1
+          fi
+
+      - name: Show help
+        run: renpy-cli --help
+
+      - name: Set projects directory
+        run: renpy-launcher set_projects_directory ..
+
+      - name: Set project
+        run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .
+
+      - name: Check web support
+        run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
+
+      - name: Build web on ${{ matrix.os }}
+        if: matrix.os != 'windows-latest'
+        run: |
+          renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
+          ls dist dist.zip
+
+      - name: Build web on ${{ matrix.os }}
+        if: matrix.os == 'windows-latest'
+        run: |
+          ls ${{ steps.renpy.outputs.launcher }}\..\the_question
+          renpy ${{ steps.renpy.outputs.launcher }} web_build ${{ steps.renpy.outputs.launcher }}\..\the_question --destination dist
+          ls dist dist.zip
