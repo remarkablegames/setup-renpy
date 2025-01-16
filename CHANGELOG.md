@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/remarkablegames/setup-renpy/compare/v1.4.3...v1.4.4) (2025-01-16)
+
+
+### Build System
+
+* **deps:** bump @actions/tool-cache from 2.0.1 to 2.0.2 ([db46d72](https://github.com/remarkablegames/setup-renpy/commit/db46d72c0f8d9a1df3d160fc60fbbcfc77c4989d))
+
 ## [1.4.3](https://github.com/remarkablegames/setup-renpy/compare/v1.4.2...v1.4.3) (2024-10-07)
 
 
