@@ -75,12 +75,12 @@ jobs:
           cat $(command -v renpy-launcher)
 
       - name: Check version
-        if: matrix.os != 'windows-latest'
+        shell: bash
         run: |
-          renpy-cli --version &> RENPY_VERSION
+          renpy${{ matrix.os != 'windows-latest' && '-cli' }} --version &> RENPY_VERSION
           if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
             echo 'Version does not match. See version below:'
-            renpy-cli --version
+            renpy${{ matrix.os != 'windows-latest' && '-cli' }} --version
             exit 1
           fi
 
@@ -102,7 +102,7 @@ jobs:
           renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
           ls dist dist.zip
 
-      - name: Build web on ${{ matrix.os }}
+      - name: Build web on windows-latest
         if: matrix.os == 'windows-latest'
         run: |
           ls ${{ steps.renpy.outputs.launcher }}\..\the_question
