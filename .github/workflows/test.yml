@@ -75,7 +75,6 @@ jobs:
           cat $(command -v renpy-launcher)
 
       - name: Check version
-        shell: bash
         run: |
           renpy${{ matrix.os != 'windows-latest' && '-cli' || '' }} --version &> RENPY_VERSION
           if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
