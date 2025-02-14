@@ -77,10 +77,10 @@ jobs:
       - name: Check version
         shell: bash
         run: |
-          renpy${{ matrix.os == 'windows-latest' && '' || '-cli' }} --version &> RENPY_VERSION
+          renpy${{ matrix.os != 'windows-latest' && '-cli' || '' }} --version &> RENPY_VERSION
           if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
             echo 'Version does not match. See version below:'
-            renpy${{ matrix.os == 'windows-latest' && '' || '-cli' }} --version
+            renpy${{ matrix.os != 'windows-latest' && '-cli' || '' }} --version
             exit 1
           fi
 
