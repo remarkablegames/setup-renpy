@@ -4,7 +4,7 @@
 [![build](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml/badge.svg)](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/remarkablegames/setup-renpy/graph/badge.svg?token=xTSeP1FvRP)](https://codecov.io/gh/remarkablegames/setup-renpy)
 
-📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html).
+📖 Set up GitHub Actions workflow with [Ren'Py CLI](https://www.renpy.org/doc/html/cli.html). Read the [blog post](https://remarkablegames.org/posts/setup-renpy-cli-github-actions/).
 
 ## Quick Start
 
@@ -154,18 +154,10 @@ See [action.yml](action.yml)
 > - run: renpy-launcher
 > ```
 
-## Resources
-
-- [Article](https://remarkablegames.org/posts/setup-renpy-cli-github-actions/)
-
 ## Examples
 
-- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template/blob/master/.github/workflows/build.yml)
-- [remarkablegames/renpy-examples](https://github.com/remarkablegames/renpy-examples/blob/master/.github/workflows/lint.yml)
-
-## Contributions
-
-Contributions are welcome! 👋
+- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template)
+- [remarkablegames/renpy-examples](https://github.com/remarkablegames/renpy-examples)
 
 ## License
 
