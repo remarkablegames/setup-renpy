@@ -34,7 +34,7 @@ fi
 echo 'Creating PR'
 BRANCH="feat/version-$LATEST_VERSION"
 git checkout -b $BRANCH
-git commit -am "feat(action): bump Ren'Py CLI version from $CURRENT_VERSION to $LATEST_VERSION"
+git commit -am "feat(action): bump Ren'Py CLI version from $CURRENT_VERSION to $LATEST_VERSION" -m "https://www.renpy.org/release/$LATEST_VERSION"
 git push --force origin $BRANCH
 gh pr create --assignee remarkablemark --fill --reviewer remarkablemark
 
