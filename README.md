@@ -66,12 +66,12 @@ See [action.yml](action.yml)
 
 ### `cli-version`
 
-**Optional**: CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.2.3`](https://www.renpy.org/release/8.2.3):
+**Optional**: CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.3.6`](https://www.renpy.org/release/8.3.6):
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
   with:
-    cli-version: 8.2.3
+    cli-version: 8.3.6
 
 - run: renpy-cli --version
 ```
