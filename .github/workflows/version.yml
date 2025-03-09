@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Configure Git
         run: |
@@ -35,7 +33,7 @@ jobs:
       - name: Build artifact
         run: npm run build
 
-      - name: Check version
+      - name: Update version
         run: scripts/version.sh
         env:
           GH_TOKEN: ${{ github.token }}

@@ -22,6 +22,7 @@ if [[ $CURRENT_VERSION == $LATEST_VERSION ]]; then
 fi
 
 git stash
+GIT_STASH_EXIT_CODE=$?
 
 FILES=$(git grep -l "$CURRENT_VERSION" -- ':!CHANGELOG.md')
 
@@ -38,4 +39,6 @@ git commit -am "feat(action): bump Ren'Py CLI version from $CURRENT_VERSION to $
 git push --force origin $BRANCH
 gh pr create --assignee remarkablemark --fill --reviewer remarkablemark
 
-git stash pop
+if [[ $GIT_STASH_EXIT_CODE == 0 ]]; then
+  git stash pop
+fi
