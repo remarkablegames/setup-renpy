@@ -30,13 +30,13 @@ jobs:
 
 ## Usage
 
-See [action.yml](action.yml)
-
 **Basic:**
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
 ```
+
+See [action.yml](action.yml)
 
 ## Inputs
 
