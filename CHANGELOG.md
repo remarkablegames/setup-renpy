@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/remarkablegames/setup-renpy/compare/v1.5.0...v1.5.1) (2025-05-15)
+
+
+### Build System
+
+* **deps:** bump undici from 5.28.5 to 5.29.0 in the npm_and_yarn group ([#292](https://github.com/remarkablegames/setup-renpy/issues/292)) ([0eda2f7](https://github.com/remarkablegames/setup-renpy/commit/0eda2f7b7d4313c45bdd70ecda503e3f6ac6a1b8))
+
 ## [1.5.0](https://github.com/remarkablegames/setup-renpy/compare/v1.4.4...v1.5.0) (2025-03-09)
 
 ### Features
