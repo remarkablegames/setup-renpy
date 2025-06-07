@@ -156,8 +156,7 @@ See [action.yml](action.yml)
 
 ## Examples
 
-- [remarkablegames/renpy-template](https://github.com/remarkablegames/renpy-template)
-- [remarkablegames/renpy-examples](https://github.com/remarkablegames/renpy-examples)
+- [renpy-examples](https://github.com/remarkablegames/renpy-examples)
 
 ## License
 
