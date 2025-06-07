@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   version:
@@ -28,6 +29,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --prefer-offline
+        env:
+          HUSKY: 0
 
       - name: Build artifact
         run: npm run build
