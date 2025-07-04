@@ -31,6 +31,7 @@ export async function run() {
     let binaryDirectory = find(toolName, version);
     const isCached = Boolean(binaryDirectory);
 
+    /* istanbul ignore else */
     if (!isCached) {
       // Download the specific version of the SDK (e.g., tarball/zipball)
       const download = getDownloadObject(version);
@@ -62,6 +63,7 @@ export async function run() {
       '',
     );
 
+    /* istanbul ignore else */
     if (!isCached) {
       // Rename the binary
       await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
@@ -74,10 +76,12 @@ export async function run() {
     addPath(binaryDirectory);
 
     // Cache the SDK
+    /* istanbul ignore else */
     if (!isCached) {
       await cacheDir(binaryDirectory, toolName, version);
     }
   } catch (error) {
+    /* istanbul ignore else */
     if (error instanceof Error) {
       setFailed(error.message);
     }
