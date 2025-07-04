@@ -19,15 +19,17 @@ const mockedFs = jest.mocked(fs);
 jest.mock('os');
 const mockedOs = jest.mocked(os);
 
-const platforms = ['darwin', 'linux', 'win32'] as const;
-const architectures = ['arm', 'x32', 'x64'] as const;
+const platforms: NodeJS.Platform[] = ['darwin', 'linux', 'win32'];
+const architectures = ['arm', 'x32', 'x64'] as NodeJS.Architecture[];
 
 const table = platforms.reduce(
   (testSuites, os) => [
     ...testSuites,
-    ...architectures.map((arch) => [os, arch] as [string, string]),
+    ...architectures.map(
+      (arch) => [os, arch] as [NodeJS.Platform, NodeJS.Architecture],
+    ),
   ],
-  [] as [string, string][],
+  [] as [NodeJS.Platform, NodeJS.Architecture][],
 );
 
 const version = '8.2.1';
