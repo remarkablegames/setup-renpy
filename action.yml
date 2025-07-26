@@ -9,7 +9,7 @@ inputs:
   cli-version:
     description: CLI version
     required: false
-    default: 8.3.7
+    default: 8.4.1
   launcher-name:
     description: Launcher name
     required: false
