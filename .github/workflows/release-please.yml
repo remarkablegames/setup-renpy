@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: write
-  issues: write
   pull-requests: write
 
 jobs:
@@ -50,3 +49,5 @@ jobs:
 
       - name: Tag latest release
         run: gh release edit ${{ needs.release.outputs.tag_name }} --latest
+        env:
+          GH_TOKEN: ${{ github.token }}
