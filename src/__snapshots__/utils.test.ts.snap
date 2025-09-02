@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`getBinaryDirectory returns CLI directory for arch "arm" 1`] = `"directory/renpy-8.2.1-sdkarm"`;
 
