@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/remarkablegames/setup-renpy/compare/v1.5.5...v2.0.0) (2025-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **action:** bump Node.js runtime from 20 to 24
+
+### Build System
+
+* **action:** update runtime from node20 to node24 ([c4cb917](https://github.com/remarkablegames/setup-renpy/commit/c4cb91727cc8da309e759e72aa38b9264bfa79aa))
+
 ## [1.5.5](https://github.com/remarkablegames/setup-renpy/compare/v1.5.4...v1.5.5) (2025-07-31)
 
 
