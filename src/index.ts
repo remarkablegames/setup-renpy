@@ -91,7 +91,7 @@ export async function run() {
           'update',
         ].map((path) => resolve(binaryDirectory, path)),
       ]);
-      await exec('ls', [binaryDirectory]);
+
       await cacheDir(binaryDirectory, toolName, version);
     }
   } catch (error) {
