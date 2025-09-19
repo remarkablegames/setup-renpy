@@ -99,15 +99,21 @@ jobs:
       - name: Check web support
         run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
 
+      - name: Clone The Question
+        uses: actions/checkout@v5
+        with:
+          repository: remarkablegames/the-question
+          path: the-question
+
       - name: Build web on ${{ matrix.os }}
         if: matrix.os != 'windows-latest'
         run: |
-          renpy-launcher web_build ${{ steps.renpy.outputs.launcher }}/../the_question --destination dist
+          renpy-launcher web_build the-question --destination dist
           ls dist dist.zip
 
-      - name: Build web on ${{ matrix.os }}
+      - name: Build web on windows-latest
         if: matrix.os == 'windows-latest'
         run: |
-          ls ${{ steps.renpy.outputs.launcher }}\..\the_question
-          renpy ${{ steps.renpy.outputs.launcher }} web_build ${{ steps.renpy.outputs.launcher }}\..\the_question --destination dist
+          ls
+          renpy ${{ steps.renpy.outputs.launcher }} web_build the-question --destination dist
           ls dist dist.zip
