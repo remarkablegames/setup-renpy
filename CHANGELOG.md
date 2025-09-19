@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/remarkablegames/setup-renpy/compare/v2.0.0...v2.0.1) (2025-09-19)
+
+
+### Performance Improvements
+
+* **index:** don't cache unnecessary files and folders ([3762ca7](https://github.com/remarkablegames/setup-renpy/commit/3762ca77ca190a5f94d470abab6b13ea79fdfa98))
+
 ## [2.0.0](https://github.com/remarkablegames/setup-renpy/compare/v1.5.5...v2.0.0) (2025-09-04)
 
 
