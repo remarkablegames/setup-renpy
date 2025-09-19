@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/remarkablegames/setup-renpy/compare/v2.0.1...v2.1.0) (2025-09-19)
+
+
+### Features
+
+* add renpy-launcher on windows ([97e79bb](https://github.com/remarkablegames/setup-renpy/commit/97e79bb52bac97baa54ace42a448586323e550e4))
+
 ## [2.0.1](https://github.com/remarkablegames/setup-renpy/compare/v2.0.0...v2.0.1) (2025-09-19)
 
 
