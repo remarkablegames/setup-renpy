@@ -30,7 +30,7 @@ jobs:
 
 ## Usage
 
-**Basic:**
+Set up Ren'Py CLI:
 
 ```yaml
 - uses: remarkablegames/setup-renpy@v1
