@@ -97,7 +97,7 @@ jobs:
         run: renpy-cli ${{ steps.renpy.outputs.launcher }} set_project .
 
       - name: Check web support
-        run: ls ${{ steps.renpy.outputs.launcher}}/../web/index.html
+        run: ls ${{ steps.renpy.outputs.launcher }}/../web/index.html
 
       - name: Clone The Question
         uses: actions/checkout@v5
@@ -107,13 +107,21 @@ jobs:
 
       - name: Build web on ${{ matrix.os }}
         if: matrix.os != 'windows-latest'
-        run: |
-          renpy-launcher web_build the-question --destination dist
-          ls dist dist.zip
+        run: renpy-launcher web_build the-question --destination dist
 
       - name: Build web on windows-latest
         if: matrix.os == 'windows-latest'
-        run: |
-          ls
-          renpy ${{ steps.renpy.outputs.launcher }} web_build the-question --destination dist
-          ls dist dist.zip
+        run: >
+          ${{ steps.renpy.outputs.launcher }}\..\lib\py${{ startsWith(matrix.version, '7.') && '2' || '3' }}-windows-x86_64\python.exe
+          ${{ steps.renpy.outputs.launcher }}\..\renpy.py
+          ${{ steps.renpy.outputs.launcher }}
+          web_build the-question --destination dist
+
+      - name: Check web build
+        run: ls dist dist.zip
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-${{ matrix.os }}-${{ matrix.version }}
+          path: dist
