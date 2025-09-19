@@ -1,6 +1,7 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
+
 import * as exec from '@actions/exec';
-import fs from 'fs/promises';
-import os from 'os';
 
 import {
   createLauncherBinary,
@@ -13,10 +14,10 @@ import {
 jest.mock('@actions/exec');
 const mockedExec = jest.mocked(exec);
 
-jest.mock('fs/promises');
+jest.mock('node:fs/promises');
 const mockedFs = jest.mocked(fs);
 
-jest.mock('os');
+jest.mock('node:os');
 const mockedOs = jest.mocked(os);
 
 const platforms: NodeJS.Platform[] = ['darwin', 'linux', 'win32'];

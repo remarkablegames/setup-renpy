@@ -1,7 +1,8 @@
+import { writeFile } from 'node:fs/promises';
+import { arch } from 'node:os';
+import { join } from 'node:path';
+
 import { exec } from '@actions/exec';
-import { writeFile } from 'fs/promises';
-import { arch } from 'os';
-import { join } from 'path';
 
 /**
  * Gets download object.
