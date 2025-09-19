@@ -84,12 +84,15 @@ describe.each([
       expect.stringContaining(cliName),
     ]);
 
-    const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`;
+    const sdkDirectory = resolve(
+      `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`,
+    );
 
     expect(createLauncherBinary).toHaveBeenCalledWith(
       sdkDirectory,
       launcherName,
       expect.stringContaining(cliName),
+      version,
     );
 
     expect(mockedExec.exec).toHaveBeenCalledWith('rm', [
@@ -164,7 +167,7 @@ describe.each([
 
         expect(mockedTc.extractZip).toHaveBeenCalledWith(
           pathToTarball,
-          `${pathToCLI}/renpy-${version}-sdk`,
+          expect.stringContaining(`${pathToCLI}/renpy-${version}-sdk`),
         );
       }
     });

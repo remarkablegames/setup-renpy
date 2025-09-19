@@ -72,7 +72,12 @@ export async function run() {
     }
 
     // Create the launcher binary
-    await createLauncherBinary(binaryDirectory, launcherName, binaryPath);
+    await createLauncherBinary(
+      binaryDirectory,
+      launcherName,
+      binaryPath,
+      version,
+    );
 
     // Expose the SDK by adding it to the PATH
     addPath(binaryDirectory);

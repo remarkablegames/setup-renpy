@@ -1,18 +1,48 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`getBinaryDirectory returns CLI directory for arch "arm" 1`] = `"directory/renpy-8.2.1-sdkarm"`;
+exports[`createLauncherBinary creates launcher binary on "darwin" 1`] = `
+[
+  [
+    "directory/name",
+    "cliPath directory/launcher "$@"",
+  ],
+]
+`;
 
-exports[`getBinaryDirectory returns CLI directory for arch "x32" 1`] = `"directory/renpy-8.2.1-sdk"`;
+exports[`createLauncherBinary creates launcher binary on "linux" 1`] = `
+[
+  [
+    "directory/name",
+    "cliPath directory/launcher "$@"",
+  ],
+]
+`;
+
+exports[`createLauncherBinary creates launcher binary on win32 and version "7.8.5" 1`] = `
+[
+  [
+    "directory/name.bat",
+    "directory/lib/py2-windows-x86_64/python.exe directory/renpy.py directory/launcher %*",
+  ],
+]
+`;
+
+exports[`createLauncherBinary creates launcher binary on win32 and version "8.2.3" 1`] = `
+[
+  [
+    "directory/name.bat",
+    "directory/lib/py3-windows-x86_64/python.exe directory/renpy.py directory/launcher %*",
+  ],
+]
+`;
+
+exports[`getBinaryDirectory returns CLI directory for arch "arm" 1`] = `"directory/renpy-8.2.1-sdkarm"`;
 
 exports[`getBinaryDirectory returns CLI directory for arch "x64" 1`] = `"directory/renpy-8.2.1-sdk"`;
 
-exports[`getBinaryPath when OS is "darwin" returns CLI path 1`] = `"directory/name.sh"`;
+exports[`getBinaryPath returns CLI path 1`] = `"directory/name.sh"`;
 
-exports[`getBinaryPath when OS is "linux" returns CLI path 1`] = `"directory/name.sh"`;
-
-exports[`getBinaryPath when OS is "win32" returns CLI path 1`] = `"directory/name.sh"`;
-
-exports[`getDownloadObject when OS is "darwin" and arch is "arm" gets download object 1`] = `
+exports[`getDownloadObject when arch is "arm" gets download object 1`] = `
 {
   "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
   "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
@@ -21,70 +51,7 @@ exports[`getDownloadObject when OS is "darwin" and arch is "arm" gets download o
 }
 `;
 
-exports[`getDownloadObject when OS is "darwin" and arch is "x32" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdk.zip",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "darwin" and arch is "x64" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdk.zip",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "linux" and arch is "arm" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdkarm.tar.bz2",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "linux" and arch is "x32" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdk.zip",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "linux" and arch is "x64" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdk.zip",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "win32" and arch is "arm" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdkarm.tar.bz2",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "win32" and arch is "x32" gets download object 1`] = `
-{
-  "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
-  "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
-  "sdk": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-sdk.zip",
-  "web": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-web.zip",
-}
-`;
-
-exports[`getDownloadObject when OS is "win32" and arch is "x64" gets download object 1`] = `
+exports[`getDownloadObject when arch is "x64" gets download object 1`] = `
 {
   "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
   "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",

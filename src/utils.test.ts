@@ -20,30 +20,21 @@ const mockedFs = jest.mocked(fs);
 jest.mock('node:os');
 const mockedOs = jest.mocked(os);
 
-const platforms: NodeJS.Platform[] = ['darwin', 'linux', 'win32'];
-const architectures = ['arm', 'x32', 'x64'] as NodeJS.Architecture[];
+jest.mock('node:path', () => ({
+  resolve: jest.fn((...args) => args.join('/')),
+}));
 
-const table = platforms.reduce(
-  (testSuites, os) => [
-    ...testSuites,
-    ...architectures.map(
-      (arch) => [os, arch] as [NodeJS.Platform, NodeJS.Architecture],
-    ),
-  ],
-  [] as [NodeJS.Platform, NodeJS.Architecture][],
-);
-
+const architectures: NodeJS.Architecture[] = ['arm', 'x64'];
 const version = '8.2.1';
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  jest.clearAllMocks();
 });
 
 describe('getDownloadObject', () => {
-  describe.each(table)('when OS is %p and arch is %p', (os, arch) => {
+  describe.each(architectures)('when arch is %p', (arch) => {
     beforeEach(() => {
-      mockedOs.platform.mockReturnValue(os as NodeJS.Platform);
-      mockedOs.arch.mockReturnValue(arch);
+      mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
     });
 
     it('gets download object', () => {
@@ -56,14 +47,8 @@ const directory = 'directory';
 const name = 'name';
 
 describe('getBinaryPath', () => {
-  describe.each(platforms)('when OS is %p', (os) => {
-    beforeEach(() => {
-      mockedOs.platform.mockReturnValue(os);
-    });
-
-    it('returns CLI path', () => {
-      expect(getBinaryPath(directory, name)).toMatchSnapshot();
-    });
+  it('returns CLI path', () => {
+    expect(getBinaryPath(directory, name)).toMatchSnapshot();
   });
 });
 
@@ -81,14 +66,27 @@ describe('getLauncherDirectory', () => {
 });
 
 describe('createLauncherBinary', () => {
-  it('creates launcher binary', async () => {
-    const cliPath = 'cliPath';
-    const launcherPath = `${directory}/${name}`;
-    await createLauncherBinary(directory, name, cliPath);
-    expect(mockedFs.writeFile).toHaveBeenCalledWith(
-      launcherPath,
-      `${cliPath} ${directory}/launcher "$@"`,
-    );
-    expect(mockedExec.exec).toHaveBeenCalledWith('chmod', ['+x', launcherPath]);
-  });
+  const cliPath = 'cliPath';
+
+  it.each(['darwin', 'linux'])(
+    'creates launcher binary on %p',
+    async (platform) => {
+      mockedOs.platform.mockReturnValue(platform as NodeJS.Platform);
+      await createLauncherBinary(directory, name, cliPath, version);
+      expect(mockedFs.writeFile.mock.calls).toMatchSnapshot();
+      expect(mockedExec.exec).toHaveBeenCalledWith('chmod', [
+        '+x',
+        `${directory}/${name}`,
+      ]);
+    },
+  );
+
+  it.each(['7.8.5', '8.2.3'])(
+    'creates launcher binary on win32 and version %p',
+    async (version) => {
+      mockedOs.platform.mockReturnValue('win32');
+      await createLauncherBinary(directory, name, cliPath, version);
+      expect(mockedFs.writeFile.mock.calls).toMatchSnapshot();
+    },
+  );
 });
