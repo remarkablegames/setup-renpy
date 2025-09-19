@@ -1,7 +1,9 @@
+import os from 'node:os';
+import { resolve } from 'node:path';
+
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as tc from '@actions/tool-cache';
-import os from 'os';
 
 import { run } from '.';
 import { createLauncherBinary } from './utils';
@@ -9,7 +11,7 @@ import { createLauncherBinary } from './utils';
 jest.mock('@actions/core');
 jest.mock('@actions/exec');
 jest.mock('@actions/tool-cache');
-jest.mock('os');
+jest.mock('node:os');
 
 jest.mock('./utils', () => ({
   ...jest.requireActual('./utils'),
@@ -34,9 +36,9 @@ const pathToCLI = 'path/to/cli';
 describe.each([
   ['linux', 'arm64'],
   ['win32', 'x64'],
-])('when os is %p and arch is %p', (os, arch) => {
+])('when platform is %p and arch is %p', (platform, arch) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValue(os as NodeJS.Platform);
+    mockedOs.platform.mockReturnValue(platform as NodeJS.Platform);
     mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
 
     mockedCore.getInput.mockImplementation((input) => {
@@ -47,7 +49,15 @@ describe.each([
           return cliName;
         case 'launcher-name':
           return launcherName;
+        case 'rapt':
+          return 'false';
+        case 'renios':
+          return 'false';
+        case 'web':
+          return 'false';
         default:
+          // eslint-disable-next-line no-console
+          console.error(`Invalid input: ${input}`);
           return '';
       }
     });
@@ -55,7 +65,8 @@ describe.each([
 
   it('downloads, extracts, and adds SDK to PATH', async () => {
     mockedTc.downloadTool.mockResolvedValueOnce(pathToTarball);
-    const extract = os === 'win32' ? mockedTc.extractZip : mockedTc.extractTar;
+    const extract =
+      platform === 'win32' ? mockedTc.extractZip : mockedTc.extractTar;
     extract.mockResolvedValueOnce(pathToCLI);
 
     await run();
@@ -80,6 +91,18 @@ describe.each([
       launcherName,
       expect.stringContaining(cliName),
     );
+
+    expect(mockedExec.exec).toHaveBeenCalledWith('rm', [
+      '-rf',
+      ...[
+        'doc',
+        'gui',
+        'LICENSE.txt',
+        'sdk-fonts',
+        'the_question',
+        'update',
+      ].map((path) => resolve(sdkDirectory, path)),
+    ]);
 
     expect(mockedTc.cacheDir).toHaveBeenCalledWith(
       sdkDirectory,
@@ -111,6 +134,8 @@ describe.each([
           return version;
         case 'cli-name':
           return cliName;
+        case 'launcher-name':
+          return launcherName;
         case 'rapt':
           return String(inputs.rapt);
         case 'renios':
@@ -118,6 +143,8 @@ describe.each([
         case 'web':
           return String(inputs.web);
         default:
+          // eslint-disable-next-line no-console
+          console.error(`Invalid input: ${input}`);
           return '';
       }
     });

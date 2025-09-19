@@ -1,3 +1,5 @@
+import { resolve } from 'node:path';
+
 import { addPath, getInput, setFailed, setOutput } from '@actions/core';
 import { exec } from '@actions/exec';
 import {
@@ -78,6 +80,18 @@ export async function run() {
     // Cache the SDK
     /* istanbul ignore else */
     if (!isCached) {
+      await exec('rm', [
+        '-rf',
+        ...[
+          'doc',
+          'gui',
+          'LICENSE.txt',
+          'sdk-fonts',
+          'the_question',
+          'update',
+        ].map((path) => resolve(binaryDirectory, path)),
+      ]);
+      await exec('ls', [binaryDirectory]);
       await cacheDir(binaryDirectory, toolName, version);
     }
   } catch (error) {
