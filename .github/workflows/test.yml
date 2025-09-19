@@ -71,12 +71,6 @@ jobs:
           renpy --version
           renpy --help
 
-      - name: Show launcher
-        if: matrix.os != 'windows-latest'
-        run: |
-          ls $(command -v renpy-launcher)
-          cat $(command -v renpy-launcher)
-
       - name: Check version
         if: matrix.os != 'windows-latest'
         run: |
@@ -105,17 +99,8 @@ jobs:
           repository: remarkablegames/the-question
           path: the-question
 
-      - name: Build web on ${{ matrix.os }}
-        if: matrix.os != 'windows-latest'
+      - name: Build web
         run: renpy-launcher web_build the-question --destination dist
-
-      - name: Build web on windows-latest
-        if: matrix.os == 'windows-latest'
-        run: >
-          ${{ steps.renpy.outputs.launcher }}\..\lib\py${{ startsWith(matrix.version, '7.') && '2' || '3' }}-windows-x86_64\python.exe
-          ${{ steps.renpy.outputs.launcher }}\..\renpy.py
-          ${{ steps.renpy.outputs.launcher }}
-          web_build the-question --destination dist
 
       - name: Check web build
         run: ls dist dist.zip
