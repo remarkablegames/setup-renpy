@@ -106,7 +106,7 @@ jobs:
         run: ls dist dist.zip
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-${{ matrix.os }}-${{ matrix.version }}
           path: dist
