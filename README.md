@@ -1,3 +1,7 @@
+<p align="center">
+  <img alt="Ren'Py" height="200" src="https://raw.githubusercontent.com/remarkablegames/setup-renpy/master/renpy-logo.svg">
+</p>
+
 # setup-renpy
 
 [![version](https://img.shields.io/github/release/remarkablegames/setup-renpy)](https://github.com/remarkablegames/setup-renpy/releases)
