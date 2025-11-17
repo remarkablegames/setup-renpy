@@ -1,6 +1,6 @@
 # setup-renpy
 
-[![version](https://badgen.net/github/release/remarkablegames/setup-renpy)](https://github.com/remarkablegames/setup-renpy/releases)
+[![version](https://img.shields.io/github/release/remarkablegames/setup-renpy)](https://github.com/remarkablegames/setup-renpy/releases)
 [![build](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml/badge.svg)](https://github.com/remarkablegames/setup-renpy/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/remarkablegames/setup-renpy/graph/badge.svg?token=xTSeP1FvRP)](https://codecov.io/gh/remarkablegames/setup-renpy)
 
