@@ -23,7 +23,7 @@ fi
 
 git stash
 
-FILES=$(git grep -l "$CURRENT_VERSION" -- ':!CHANGELOG.md' ':!package*.json')
+FILES=$(git grep -l "$CURRENT_VERSION" -- ':!CHANGELOG.md' ':!package*.json' ':!*.svg')
 
 if [[ $(uname) == 'Darwin' ]]; then
   echo "$FILES" | xargs sed -i '' -e "s/$CURRENT_VERSION/$LATEST_VERSION/g"
