@@ -65,19 +65,20 @@ jobs:
           command -v renpy-launcher
 
       - name: Locate Windows executable
-        if: matrix.os == 'windows-latest'
+        if: runner.os == 'Windows'
         run: |
           command -v renpy
           renpy --version
           renpy --help
 
       - name: Check version
-        if: matrix.os != 'windows-latest'
+        if: runner.os != 'Windows'
         run: |
-          renpy-cli --version &> RENPY_VERSION
-          if [[ $(cat RENPY_VERSION) != *'${{ matrix.version }}'* ]]; then
+          VERSION=$(renpy-cli --version 2>&1)
+
+          if [[ $VERSION != "Ren'Py ${{ matrix.version }}"* ]]; then
             echo 'Version does not match. See version below:'
-            renpy-cli --version
+            echo $VERSION
             exit 1
           fi
 
