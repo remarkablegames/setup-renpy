@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.4](https://github.com/remarkablegames/setup-renpy/compare/v2.1.3...v2.1.4) (2026-01-08)
+
+
+### Build System
+
+* **deps:** bump @actions/core from 2.0.1 to 2.0.2 ([#500](https://github.com/remarkablegames/setup-renpy/issues/500)) ([c7724ca](https://github.com/remarkablegames/setup-renpy/commit/c7724cab6144e5dfdb756327be3f6ec0adcc180b))
+* **deps:** bump @actions/tool-cache from 2.0.2 to 3.0.0 ([#501](https://github.com/remarkablegames/setup-renpy/issues/501)) ([35b5665](https://github.com/remarkablegames/setup-renpy/commit/35b5665ead693c5d48bc9818f153cbbbade4e5bd))
+
 ## [2.1.3](https://github.com/remarkablegames/setup-renpy/compare/v2.1.2...v2.1.3) (2026-01-05)
 
 
