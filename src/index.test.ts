@@ -1,31 +1,117 @@
-import os from 'node:os';
-import { resolve } from 'node:path';
+import { jest } from '@jest/globals';
 
-import * as core from '@actions/core';
-import * as exec from '@actions/exec';
-import * as tc from '@actions/tool-cache';
+const mockedCoreGetInput: jest.MockedFunction<(name: string) => string> =
+  jest.fn();
+const mockedCoreSetFailed: jest.MockedFunction<(message: string) => void> =
+  jest.fn();
+const mockedCoreAddPath: jest.MockedFunction<(inputPath: string) => void> =
+  jest.fn();
+const mockedCoreSetOutput: jest.MockedFunction<
+  (name: string, value: string) => void
+> = jest.fn();
 
-import { run } from '.';
-import { createLauncherBinary } from './utils';
-
-jest.mock('@actions/core');
-jest.mock('@actions/exec');
-jest.mock('@actions/tool-cache');
-jest.mock('node:os');
-
-jest.mock('./utils', () => ({
-  ...jest.requireActual('./utils'),
-  createLauncherBinary: jest.fn(),
+jest.unstable_mockModule('@actions/core', () => ({
+  getInput: mockedCoreGetInput,
+  setFailed: mockedCoreSetFailed,
+  addPath: mockedCoreAddPath,
+  setOutput: mockedCoreSetOutput,
 }));
 
-const mockedCore = jest.mocked(core);
-const mockedExec = jest.mocked(exec);
-const mockedTc = jest.mocked(tc);
-const mockedOs = jest.mocked(os);
+const mockedExec: jest.MockedFunction<
+  (commandLine: string, args?: string[]) => Promise<number>
+> = jest.fn();
 
-beforeEach(() => {
-  jest.resetAllMocks();
-});
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: mockedExec,
+}));
+
+const mockedTcDownloadTool: jest.MockedFunction<
+  (url: string) => Promise<string>
+> = jest.fn();
+
+const mockedTcExtractTar: jest.MockedFunction<
+  (file: string, dest?: string) => Promise<string>
+> = jest.fn();
+
+const mockedTcExtractZip: jest.MockedFunction<
+  (file: string, dest?: string) => Promise<string>
+> = jest.fn();
+
+const mockedTcCacheDir: jest.MockedFunction<
+  (sourceDir: string, tool: string, version: string) => Promise<string>
+> = jest.fn();
+
+const mockedTcFind: jest.MockedFunction<
+  (toolName: string, versionSpec: string) => string
+> = jest.fn();
+
+jest.unstable_mockModule('@actions/tool-cache', () => ({
+  downloadTool: mockedTcDownloadTool,
+  extractTar: mockedTcExtractTar,
+  extractZip: mockedTcExtractZip,
+  cacheDir: mockedTcCacheDir,
+  find: mockedTcFind,
+}));
+
+const mockedPlatform: jest.MockedFunction<() => NodeJS.Platform> = jest.fn();
+const mockedArch: jest.MockedFunction<() => NodeJS.Architecture> = jest.fn();
+
+const mockedWriteFile: jest.MockedFunction<
+  (path: string, data: string) => Promise<void>
+> = jest.fn();
+
+jest.unstable_mockModule('node:os', () => ({
+  platform: mockedPlatform,
+  arch: mockedArch,
+}));
+
+jest.unstable_mockModule('node:fs/promises', () => ({
+  writeFile: mockedWriteFile,
+}));
+
+const mockedCreateLauncherBinary: jest.MockedFunction<
+  (
+    directory: string,
+    name: string,
+    cliPath: string,
+    version: string,
+  ) => Promise<void>
+> = jest.fn();
+
+// Create mocked versions of utils functions that use the mocked os module
+const mockedGetDownloadObject = (version: string) => {
+  const isArm = mockedArch().includes('arm');
+  return {
+    sdk: `https://www.renpy.org/dl/${version}/renpy-${version}-sdk${isArm ? 'arm.tar.bz2' : '.zip'}`,
+    rapt: `https://www.renpy.org/dl/${version}/renpy-${version}-rapt.zip`,
+    renios: `https://www.renpy.org/dl/${version}/renpy-${version}-renios.zip`,
+    web: `https://www.renpy.org/dl/${version}/renpy-${version}-web.zip`,
+  };
+};
+
+const mockedGetBinaryDirectory = (directory: string, version: string) => {
+  return `${directory}/renpy-${version}-sdk${mockedArch().includes('arm') ? 'arm' : ''}`;
+};
+
+const mockedGetBinaryPath = (directory: string, name: string) => {
+  return `${directory}/${name}.sh`;
+};
+
+const mockedGetLauncherDirectory = (directory: string) => {
+  return `${directory}/launcher`;
+};
+
+jest.unstable_mockModule('./utils.js', () => ({
+  getDownloadObject: mockedGetDownloadObject,
+  getBinaryDirectory: mockedGetBinaryDirectory,
+  getBinaryPath: mockedGetBinaryPath,
+  getLauncherDirectory: mockedGetLauncherDirectory,
+  createLauncherBinary: mockedCreateLauncherBinary,
+}));
+
+jest.unstable_mockModule('node:path', () => ({
+  resolve: jest.fn((...args: string[]) => args.join('/')),
+}));
 
 const cliName = 'cli-name';
 const version = '1.2.3';
@@ -38,10 +124,10 @@ describe.each([
   ['win32', 'x64'],
 ])('when platform is %p and arch is %p', (platform, arch) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValue(platform as NodeJS.Platform);
-    mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
+    mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
+    mockedArch.mockReturnValue(arch as NodeJS.Architecture);
 
-    mockedCore.getInput.mockImplementation((input) => {
+    mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
         case 'cli-version':
           return version;
@@ -56,66 +142,61 @@ describe.each([
         case 'web':
           return 'false';
         default:
-          // eslint-disable-next-line no-console
-          console.error(`Invalid input: ${input}`);
-          return '';
+          throw Error(`Invalid input: ${input}`);
       }
     });
   });
 
   it('downloads, extracts, and adds SDK to PATH', async () => {
-    mockedTc.downloadTool.mockResolvedValueOnce(pathToTarball);
+    const { run } = await import('./index.js');
+    mockedTcDownloadTool.mockResolvedValueOnce(pathToTarball);
     const extract =
-      platform === 'win32' ? mockedTc.extractZip : mockedTc.extractTar;
+      platform === 'win32' ? mockedTcExtractZip : mockedTcExtractTar;
     extract.mockResolvedValueOnce(pathToCLI);
 
     await run();
 
-    expect(mockedTc.downloadTool).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `https://www.renpy.org/dl/${version}/renpy-${version}-sdk`,
-      ),
+    expect(mockedTcDownloadTool).toHaveBeenCalledWith(
+      arch === 'arm64'
+        ? `https://www.renpy.org/dl/${version}/renpy-${version}-sdkarm.tar.bz2`
+        : `https://www.renpy.org/dl/${version}/renpy-${version}-sdk.zip`,
     );
 
     expect(extract).toHaveBeenCalledWith(pathToTarball);
 
-    expect(mockedExec.exec).toHaveBeenCalledWith('mv', [
-      expect.stringContaining('renpy'),
-      expect.stringContaining(cliName),
+    expect(mockedExec).toHaveBeenCalledWith('mv', [
+      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/renpy.sh`,
+      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/cli-name`,
     ]);
 
-    const sdkDirectory = resolve(
-      `${pathToCLI}/renpy-${version}-sdk${arch.includes('arm') ? 'arm' : ''}`,
-    );
+    const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}`;
 
-    expect(createLauncherBinary).toHaveBeenCalledWith(
+    expect(mockedCreateLauncherBinary).toHaveBeenCalledWith(
       sdkDirectory,
       launcherName,
-      expect.stringContaining(cliName),
+      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/cli-name`,
       version,
     );
 
-    expect(mockedExec.exec).toHaveBeenCalledWith('rm', [
+    expect(mockedExec).toHaveBeenCalledWith('rm', [
       '-rf',
-      ...[
-        'doc',
-        'gui',
-        'LICENSE.txt',
-        'sdk-fonts',
-        'the_question',
-        'update',
-      ].map((path) => resolve(sdkDirectory, path)),
+      `${sdkDirectory}/doc`,
+      `${sdkDirectory}/gui`,
+      `${sdkDirectory}/LICENSE.txt`,
+      `${sdkDirectory}/sdk-fonts`,
+      `${sdkDirectory}/the_question`,
+      `${sdkDirectory}/update`,
     ]);
 
-    expect(mockedTc.cacheDir).toHaveBeenCalledWith(
+    expect(mockedTcCacheDir).toHaveBeenCalledWith(
       sdkDirectory,
       cliName,
       version,
     );
 
-    expect(mockedCore.addPath).toHaveBeenCalledWith(sdkDirectory);
+    expect(mockedCoreAddPath).toHaveBeenCalledWith(sdkDirectory);
 
-    expect(mockedCore.setOutput).toHaveBeenCalledWith(
+    expect(mockedCoreSetOutput).toHaveBeenCalledWith(
       'launcher',
       `${sdkDirectory}/launcher`,
     );
@@ -128,10 +209,10 @@ describe.each([
   { rapt: false, renios: false, web: true },
 ])('when input is %p and arch is %p', (inputs) => {
   beforeEach(() => {
-    mockedOs.platform.mockReturnValue('darwin');
-    mockedOs.arch.mockReturnValue('x64');
+    mockedPlatform.mockReturnValue('darwin');
+    mockedArch.mockReturnValue('x64');
 
-    mockedCore.getInput.mockImplementation((input) => {
+    mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
         case 'cli-version':
           return version;
@@ -146,28 +227,27 @@ describe.each([
         case 'web':
           return String(inputs.web);
         default:
-          // eslint-disable-next-line no-console
-          console.error(`Invalid input: ${input}`);
-          return '';
+          throw Error(`Invalid input: ${input}`);
       }
     });
   });
 
   it('downloads, extracts, and adds SDK to PATH', async () => {
-    mockedTc.downloadTool.mockResolvedValue(pathToTarball);
-    mockedTc.extractZip.mockResolvedValue(pathToCLI);
+    const { run } = await import('./index.js');
+    mockedTcDownloadTool.mockResolvedValue(pathToTarball);
+    mockedTcExtractZip.mockResolvedValue(pathToCLI);
 
     await run();
 
     Object.entries(inputs).forEach(([key, value]) => {
       if (value) {
-        expect(mockedTc.downloadTool).toHaveBeenCalledWith(
+        expect(mockedTcDownloadTool).toHaveBeenCalledWith(
           `https://www.renpy.org/dl/${version}/renpy-${version}-${key}.zip`,
         );
 
-        expect(mockedTc.extractZip).toHaveBeenCalledWith(
+        expect(mockedTcExtractZip).toHaveBeenCalledWith(
           pathToTarball,
-          expect.stringContaining(`${pathToCLI}/renpy-${version}-sdk`),
+          `${pathToCLI}/renpy-${version}-sdk`,
         );
       }
     });
@@ -177,10 +257,11 @@ describe.each([
 describe('error', () => {
   it('throws error', async () => {
     const message = 'error';
-    mockedCore.getInput.mockImplementationOnce(() => {
+    const { run } = await import('./index.js');
+    mockedCoreGetInput.mockImplementationOnce(() => {
       throw new Error(message);
     });
     await run();
-    expect(mockedCore.setFailed).toHaveBeenCalledWith(message);
+    expect(mockedCoreSetFailed).toHaveBeenCalledWith(message);
   });
 });

@@ -1,27 +1,23 @@
-import fs from 'node:fs/promises';
-import os from 'node:os';
+import { jest } from '@jest/globals';
 
-import * as exec from '@actions/exec';
+jest.unstable_mockModule('@actions/exec', () => ({
+  exec: jest.fn(),
+}));
 
-import {
-  createLauncherBinary,
-  getBinaryDirectory,
-  getBinaryPath,
-  getDownloadObject,
-  getLauncherDirectory,
-} from './utils';
+jest.unstable_mockModule('node:fs/promises', () => ({
+  writeFile: jest.fn(),
+}));
 
-jest.mock('@actions/exec');
-const mockedExec = jest.mocked(exec);
+const mockedArch = jest.fn();
+const mockedPlatform = jest.fn();
 
-jest.mock('node:fs/promises');
-const mockedFs = jest.mocked(fs);
+jest.unstable_mockModule('node:os', () => ({
+  arch: mockedArch,
+  platform: mockedPlatform,
+}));
 
-jest.mock('node:os');
-const mockedOs = jest.mocked(os);
-
-jest.mock('node:path', () => ({
-  resolve: jest.fn((...args) => args.join('/')),
+jest.unstable_mockModule('node:path', () => ({
+  resolve: jest.fn((...args: string[]) => args.join('/')),
 }));
 
 const architectures: NodeJS.Architecture[] = ['arm', 'x64'];
@@ -34,10 +30,11 @@ beforeEach(() => {
 describe('getDownloadObject', () => {
   describe.each(architectures)('when arch is %p', (arch) => {
     beforeEach(() => {
-      mockedOs.arch.mockReturnValue(arch as NodeJS.Architecture);
+      mockedArch.mockReturnValue(arch as NodeJS.Architecture);
     });
 
-    it('gets download object', () => {
+    it('gets download object', async () => {
+      const { getDownloadObject } = await import('./utils.js');
       expect(getDownloadObject(version)).toMatchSnapshot();
     });
   });
@@ -47,20 +44,23 @@ const directory = 'directory';
 const name = 'name';
 
 describe('getBinaryPath', () => {
-  it('returns CLI path', () => {
+  it('returns CLI path', async () => {
+    const { getBinaryPath } = await import('./utils.js');
     expect(getBinaryPath(directory, name)).toMatchSnapshot();
   });
 });
 
 describe('getBinaryDirectory', () => {
-  it.each(architectures)('returns CLI directory for arch %p', (arch) => {
-    mockedOs.arch.mockReturnValueOnce(arch);
+  it.each(architectures)('returns CLI directory for arch %p', async (arch) => {
+    mockedArch.mockReturnValueOnce(arch);
+    const { getBinaryDirectory } = await import('./utils.js');
     expect(getBinaryDirectory(directory, version)).toMatchSnapshot();
   });
 });
 
 describe('getLauncherDirectory', () => {
-  it('returns launcher directory', () => {
+  it('returns launcher directory', async () => {
+    const { getLauncherDirectory } = await import('./utils.js');
     expect(getLauncherDirectory(directory)).toMatchSnapshot();
   });
 });
@@ -71,10 +71,13 @@ describe('createLauncherBinary', () => {
   it.each(['darwin', 'linux'])(
     'creates launcher binary on %p',
     async (platform) => {
-      mockedOs.platform.mockReturnValue(platform as NodeJS.Platform);
+      mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
+      const { writeFile } = await import('node:fs/promises');
+      const { exec } = await import('@actions/exec');
+      const { createLauncherBinary } = await import('./utils.js');
       await createLauncherBinary(directory, name, cliPath, version);
-      expect(mockedFs.writeFile.mock.calls).toMatchSnapshot();
-      expect(mockedExec.exec).toHaveBeenCalledWith('chmod', [
+      expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+      expect(exec as jest.Mock).toHaveBeenCalledWith('chmod', [
         '+x',
         `${directory}/${name}`,
       ]);
@@ -84,9 +87,11 @@ describe('createLauncherBinary', () => {
   it.each(['7.8.5', '8.2.3'])(
     'creates launcher binary on win32 and version %p',
     async (version) => {
-      mockedOs.platform.mockReturnValue('win32');
+      mockedPlatform.mockReturnValue('win32');
+      const { writeFile } = await import('node:fs/promises');
+      const { createLauncherBinary } = await import('./utils.js');
       await createLauncherBinary(directory, name, cliPath, version);
-      expect(mockedFs.writeFile.mock.calls).toMatchSnapshot();
+      expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
     },
   );
 });
