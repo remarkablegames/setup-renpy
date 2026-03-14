@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.7](https://github.com/remarkablegames/setup-renpy/compare/v2.1.6...v2.1.7) (2026-03-14)
+
+
+### Build System
+
+* **deps:** bump undici from 6.23.0 to 6.24.0 ([#556](https://github.com/remarkablegames/setup-renpy/issues/556)) ([6a0ea4b](https://github.com/remarkablegames/setup-renpy/commit/6a0ea4bd43ce9dce5cc99be5df2adca55b7def71))
+
 ## [2.1.6](https://github.com/remarkablegames/setup-renpy/compare/v2.1.5...v2.1.6) (2026-02-04)
 
 
