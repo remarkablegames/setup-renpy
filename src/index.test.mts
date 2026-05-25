@@ -88,6 +88,9 @@ const mockedCreateLauncherBinary: jest.MockedFunction<
 const mockedCreateUnixBinaryWrapper: jest.MockedFunction<
   (directory: string, name: string, command: string) => Promise<void>
 > = jest.fn();
+const mockedCreateWindowsBinaryWrapper: jest.MockedFunction<
+  (directory: string, name: string, command: string) => Promise<void>
+> = jest.fn();
 
 // Create mocked versions of utils functions that use the mocked os module
 const mockedGetDownloadObject = (version: string) => {
@@ -119,6 +122,7 @@ jest.unstable_mockModule('./utils.js', () => ({
   getLauncherDirectory: mockedGetLauncherDirectory,
   createLauncherBinary: mockedCreateLauncherBinary,
   createUnixBinaryWrapper: mockedCreateUnixBinaryWrapper,
+  createWindowsBinaryWrapper: mockedCreateWindowsBinaryWrapper,
 }));
 
 jest.unstable_mockModule('node:path', () => ({
@@ -186,18 +190,23 @@ describe.each([
     expect(extract).toHaveBeenCalledWith(pathToTarball);
 
     const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}`;
-    const wrapperDirectory =
-      platform === 'win32'
-        ? sdkDirectory
-        : `${pathToRunnerTemp}/setup-renpy-123`;
+    const wrapperDirectory = `${pathToRunnerTemp}/setup-renpy-123`;
 
     if (platform === 'win32') {
+      expect(mockedMkdtemp).toHaveBeenCalledWith(
+        `${pathToRunnerTemp}/setup-renpy-`,
+      );
       expect(mockedCreateUnixBinaryWrapper).not.toHaveBeenCalled();
-      expect(mockedMkdtemp).not.toHaveBeenCalled();
+      expect(mockedCreateWindowsBinaryWrapper).toHaveBeenCalledWith(
+        wrapperDirectory,
+        cliName,
+        `"${sdkDirectory}/renpy.exe"`,
+      );
     } else {
       expect(mockedMkdtemp).toHaveBeenCalledWith(
         `${pathToRunnerTemp}/setup-renpy-`,
       );
+      expect(mockedCreateWindowsBinaryWrapper).not.toHaveBeenCalled();
       expect(mockedCreateUnixBinaryWrapper).toHaveBeenCalledWith(
         wrapperDirectory,
         cliName,
@@ -297,6 +306,7 @@ describe.each([
       cliName,
       `"${pathToCLI}/renpy-${version}-sdk/renpy.sh"`,
     );
+    expect(mockedCreateWindowsBinaryWrapper).not.toHaveBeenCalled();
 
     Object.entries(inputs).forEach(([key, value]) => {
       if (value) {

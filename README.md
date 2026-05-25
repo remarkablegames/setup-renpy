@@ -56,15 +56,6 @@ See [action.yml](action.yml)
 - run: renpy-cli
 ```
 
-> [!NOTE]
-> On Windows, CLI name is `renpy` and it cannot be changed:
->
-> ```yaml
-> - uses: remarkablegames/setup-renpy@v1
->
-> - run: renpy
-> ```
-
 ### `cli-version`
 
 **Optional**: CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.5.3`](https://www.renpy.org/release/8.5.3):

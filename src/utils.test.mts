@@ -83,6 +83,18 @@ describe('createUnixBinaryWrapper', () => {
   });
 });
 
+describe('createWindowsBinaryWrapper', () => {
+  const command = '"cliPath"';
+
+  it('creates wrapper binary', async () => {
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    const { createWindowsBinaryWrapper } = await import('./utils.js');
+    await createWindowsBinaryWrapper(directory, name, command);
+    expect((mkdir as jest.Mock).mock.calls).toMatchSnapshot();
+    expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+  });
+});
+
 describe('createLauncherBinary', () => {
   const cliPath = 'cliPath';
   const wrapperDirectory = 'wrapperDirectory';

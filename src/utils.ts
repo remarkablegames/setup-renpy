@@ -75,6 +75,23 @@ export async function createUnixBinaryWrapper(
 }
 
 /**
+ * Creates Windows binary wrapper.
+ *
+ * @param directory - Wrapper directory
+ * @param name - Binary name
+ * @param command - Command to execute
+ */
+export async function createWindowsBinaryWrapper(
+  directory: string,
+  name: string,
+  command: string,
+) {
+  const wrapperPath = resolve(directory, `${name}.bat`);
+  await mkdir(directory, { recursive: true });
+  await writeFile(wrapperPath, `@echo off\r\n${command} %*\r\n`);
+}
+
+/**
  * Creates launcher binary.
  *
  * @param binaryDirectory - Binary directory
@@ -97,9 +114,10 @@ export async function createLauncherBinary(
       `py${version.startsWith('7.') ? '2' : '3'}-windows-x86_64`,
       'python.exe',
     );
-    await writeFile(
-      resolve(binaryDirectory, `${launcherName}.bat`),
-      `${pythonExecutable} ${resolve(binaryDirectory, 'renpy.py')} ${getLauncherDirectory(binaryDirectory)} %*`,
+    await createWindowsBinaryWrapper(
+      wrapperDirectory,
+      launcherName,
+      `"${pythonExecutable}" "${resolve(binaryDirectory, 'renpy.py')}" "${getLauncherDirectory(binaryDirectory)}"`,
     );
   } else {
     await createUnixBinaryWrapper(

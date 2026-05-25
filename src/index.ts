@@ -14,6 +14,7 @@ import {
 import {
   createLauncherBinary,
   createUnixBinaryWrapper,
+  createWindowsBinaryWrapper,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -64,12 +65,17 @@ export async function run() {
 
     const binaryPath = getBinaryPath(binaryDirectory, 'renpy');
     const temporaryDirectory = process.env['RUNNER_TEMP'] ?? tmpdir();
-    const wrapperDirectory =
-      platform() === 'win32'
-        ? binaryDirectory
-        : await mkdtemp(resolve(temporaryDirectory, 'setup-renpy-'));
+    const wrapperDirectory = await mkdtemp(
+      resolve(temporaryDirectory, 'setup-renpy-'),
+    );
 
-    if (platform() !== 'win32') {
+    if (platform() === 'win32') {
+      await createWindowsBinaryWrapper(
+        wrapperDirectory,
+        cliName,
+        `"${resolve(binaryDirectory, 'renpy.exe')}"`,
+      );
+    } else {
       await createUnixBinaryWrapper(
         wrapperDirectory,
         cliName,
