@@ -55,27 +55,36 @@ jest.unstable_mockModule('@actions/tool-cache', () => ({
 
 const mockedPlatform: jest.MockedFunction<() => NodeJS.Platform> = jest.fn();
 const mockedArch: jest.MockedFunction<() => NodeJS.Architecture> = jest.fn();
+const mockedTmpdir: jest.MockedFunction<() => string> = jest.fn();
 
 const mockedWriteFile: jest.MockedFunction<
   (path: string, data: string) => Promise<void>
 > = jest.fn();
+const mockedMkdtemp: jest.MockedFunction<(prefix: string) => Promise<string>> =
+  jest.fn();
 
 jest.unstable_mockModule('node:os', () => ({
   platform: mockedPlatform,
   arch: mockedArch,
+  tmpdir: mockedTmpdir,
 }));
 
 jest.unstable_mockModule('node:fs/promises', () => ({
   writeFile: mockedWriteFile,
+  mkdtemp: mockedMkdtemp,
 }));
 
 const mockedCreateLauncherBinary: jest.MockedFunction<
   (
     directory: string,
+    wrapperDirectory: string,
     name: string,
     cliPath: string,
     version: string,
   ) => Promise<void>
+> = jest.fn();
+const mockedCreateUnixBinaryWrapper: jest.MockedFunction<
+  (directory: string, name: string, command: string) => Promise<void>
 > = jest.fn();
 
 // Create mocked versions of utils functions that use the mocked os module
@@ -107,6 +116,7 @@ jest.unstable_mockModule('./utils.js', () => ({
   getBinaryPath: mockedGetBinaryPath,
   getLauncherDirectory: mockedGetLauncherDirectory,
   createLauncherBinary: mockedCreateLauncherBinary,
+  createUnixBinaryWrapper: mockedCreateUnixBinaryWrapper,
 }));
 
 jest.unstable_mockModule('node:path', () => ({
@@ -118,6 +128,12 @@ const version = '1.2.3';
 const launcherName = 'launcher-name';
 const pathToTarball = 'path/to/tarball';
 const pathToCLI = 'path/to/cli';
+const pathToTemp = 'path/to/temp';
+const pathToRunnerTemp = 'path/to/runner-temp';
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe.each([
   ['linux', 'arm64'],
@@ -126,6 +142,9 @@ describe.each([
   beforeEach(() => {
     mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
     mockedArch.mockReturnValue(arch as NodeJS.Architecture);
+    mockedTmpdir.mockReturnValue(pathToTemp);
+    mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
+    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -164,17 +183,31 @@ describe.each([
 
     expect(extract).toHaveBeenCalledWith(pathToTarball);
 
-    expect(mockedExec).toHaveBeenCalledWith('mv', [
-      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/renpy.sh`,
-      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/cli-name`,
-    ]);
-
     const sdkDirectory = `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}`;
+    const wrapperDirectory =
+      platform === 'win32'
+        ? sdkDirectory
+        : `${pathToRunnerTemp}/setup-renpy-123`;
+
+    if (platform === 'win32') {
+      expect(mockedCreateUnixBinaryWrapper).not.toHaveBeenCalled();
+      expect(mockedMkdtemp).not.toHaveBeenCalled();
+    } else {
+      expect(mockedMkdtemp).toHaveBeenCalledWith(
+        `${pathToRunnerTemp}/setup-renpy-`,
+      );
+      expect(mockedCreateUnixBinaryWrapper).toHaveBeenCalledWith(
+        wrapperDirectory,
+        cliName,
+        `"${sdkDirectory}/renpy.sh"`,
+      );
+    }
 
     expect(mockedCreateLauncherBinary).toHaveBeenCalledWith(
       sdkDirectory,
+      wrapperDirectory,
       launcherName,
-      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/cli-name`,
+      `${pathToCLI}/renpy-${version}-sdk${arch === 'arm64' ? 'arm' : ''}/renpy.sh`,
       version,
     );
 
@@ -194,7 +227,7 @@ describe.each([
       version,
     );
 
-    expect(mockedCoreAddPath).toHaveBeenCalledWith(sdkDirectory);
+    expect(mockedCoreAddPath).toHaveBeenCalledWith(wrapperDirectory);
 
     expect(mockedCoreSetOutput).toHaveBeenCalledWith(
       'launcher',
@@ -211,6 +244,9 @@ describe.each([
   beforeEach(() => {
     mockedPlatform.mockReturnValue('darwin');
     mockedArch.mockReturnValue('x64');
+    mockedTmpdir.mockReturnValue(pathToTemp);
+    mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
+    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -239,6 +275,12 @@ describe.each([
 
     await run();
 
+    expect(mockedCreateUnixBinaryWrapper).toHaveBeenCalledWith(
+      `${pathToRunnerTemp}/setup-renpy-123`,
+      cliName,
+      `"${pathToCLI}/renpy-${version}-sdk/renpy.sh"`,
+    );
+
     Object.entries(inputs).forEach(([key, value]) => {
       if (value) {
         expect(mockedTcDownloadTool).toHaveBeenCalledWith(
@@ -263,5 +305,42 @@ describe('error', () => {
     });
     await run();
     expect(mockedCoreSetFailed).toHaveBeenCalledWith(message);
+  });
+});
+
+describe('temporary directory fallback', () => {
+  beforeEach(() => {
+    mockedPlatform.mockReturnValue('linux');
+    mockedArch.mockReturnValue('x64');
+    mockedTmpdir.mockReturnValue(pathToTemp);
+    mockedMkdtemp.mockResolvedValue(`${pathToTemp}/setup-renpy-123`);
+    delete process.env['RUNNER_TEMP'];
+
+    mockedCoreGetInput.mockImplementation((input) => {
+      switch (input) {
+        case 'cli-version':
+          return version;
+        case 'cli-name':
+          return cliName;
+        case 'launcher-name':
+          return launcherName;
+        case 'rapt':
+        case 'renios':
+        case 'web':
+          return 'false';
+        default:
+          throw Error(`Invalid input: ${input}`);
+      }
+    });
+  });
+
+  it('uses os tmpdir when RUNNER_TEMP is unavailable', async () => {
+    const { run } = await import('./index.js');
+    mockedTcDownloadTool.mockResolvedValueOnce(pathToTarball);
+    mockedTcExtractTar.mockResolvedValueOnce(pathToCLI);
+
+    await run();
+
+    expect(mockedMkdtemp).toHaveBeenCalledWith(`${pathToTemp}/setup-renpy-`);
   });
 });

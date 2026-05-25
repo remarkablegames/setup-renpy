@@ -1,3 +1,5 @@
+import { mkdtemp } from 'node:fs/promises';
+import { platform, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
 import { addPath, getInput, setFailed, setOutput } from '@actions/core';
@@ -12,6 +14,7 @@ import {
 
 import {
   createLauncherBinary,
+  createUnixBinaryWrapper,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -60,27 +63,32 @@ export async function run() {
     const launcherDirectory = getLauncherDirectory(binaryDirectory);
     setOutput('launcher', launcherDirectory);
 
-    const binaryPath = getBinaryPath(binaryDirectory, cliName).replace(
-      '.sh',
-      '',
-    );
+    const binaryPath = getBinaryPath(binaryDirectory, 'renpy');
+    const temporaryDirectory = process.env['RUNNER_TEMP'] ?? tmpdir();
+    const wrapperDirectory =
+      platform() === 'win32'
+        ? binaryDirectory
+        : await mkdtemp(resolve(temporaryDirectory, 'setup-renpy-'));
 
-    /* istanbul ignore else */
-    if (!isCached) {
-      // Rename the binary
-      await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
+    if (platform() !== 'win32') {
+      await createUnixBinaryWrapper(
+        wrapperDirectory,
+        cliName,
+        `"${binaryPath}"`,
+      );
     }
 
     // Create the launcher binary
     await createLauncherBinary(
       binaryDirectory,
+      wrapperDirectory,
       launcherName,
       binaryPath,
       version,
     );
 
-    // Expose the SDK by adding it to the PATH
-    addPath(binaryDirectory);
+    // Expose the wrapper directory by adding it to the PATH.
+    addPath(wrapperDirectory);
 
     // Cache the SDK
     /* istanbul ignore else */

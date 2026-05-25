@@ -56,9 +56,6 @@ See [action.yml](action.yml)
 - run: renpy-cli
 ```
 
-> [!WARNING]
-> On Linux and macOS, CLI name cannot be `renpy`.
-
 > [!NOTE]
 > On Windows, CLI name is `renpy` and it cannot be changed:
 >
