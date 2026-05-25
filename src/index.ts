@@ -75,6 +75,14 @@ export async function run() {
         cliName,
         `"${resolve(binaryDirectory, 'renpy.exe')}"`,
       );
+
+      if (cliName !== 'renpy') {
+        await createWindowsBinaryWrapper(
+          wrapperDirectory,
+          'renpy',
+          `"${resolve(binaryDirectory, 'renpy.exe')}"`,
+        );
+      }
     } else {
       await createUnixBinaryWrapper(
         wrapperDirectory,

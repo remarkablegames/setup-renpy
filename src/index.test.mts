@@ -202,6 +202,11 @@ describe.each([
         cliName,
         `"${sdkDirectory}/renpy.exe"`,
       );
+      expect(mockedCreateWindowsBinaryWrapper).toHaveBeenCalledWith(
+        wrapperDirectory,
+        'renpy',
+        `"${sdkDirectory}/renpy.exe"`,
+      );
     } else {
       expect(mockedMkdtemp).toHaveBeenCalledWith(
         `${pathToRunnerTemp}/setup-renpy-`,
@@ -369,5 +374,47 @@ describe('temporary directory fallback', () => {
     await run();
 
     expect(mockedMkdtemp).toHaveBeenCalledWith(`${pathToTemp}/setup-renpy-`);
+  });
+});
+
+describe('windows compatibility alias', () => {
+  beforeEach(() => {
+    mockedPlatform.mockReturnValue('win32');
+    mockedArch.mockReturnValue('x64');
+    mockedTmpdir.mockReturnValue(pathToTemp);
+    mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
+    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+
+    mockedCoreGetInput.mockImplementation((input) => {
+      switch (input) {
+        case 'cli-version':
+          return version;
+        case 'cli-name':
+          return 'renpy';
+        case 'launcher-name':
+          return launcherName;
+        case 'rapt':
+        case 'renios':
+        case 'web':
+          return 'false';
+        default:
+          throw Error(`Invalid input: ${input}`);
+      }
+    });
+  });
+
+  it('does not create a duplicate renpy alias when cli-name is renpy', async () => {
+    const { run } = await import('./index.js');
+    mockedTcDownloadTool.mockResolvedValueOnce(pathToTarball);
+    mockedTcExtractZip.mockResolvedValueOnce(pathToCLI);
+
+    await run();
+
+    expect(mockedCreateWindowsBinaryWrapper).toHaveBeenCalledTimes(1);
+    expect(mockedCreateWindowsBinaryWrapper).toHaveBeenCalledWith(
+      `${pathToRunnerTemp}/setup-renpy-123`,
+      'renpy',
+      `"${pathToCLI}/renpy-${version}-sdk/renpy.exe"`,
+    );
   });
 });
