@@ -17,14 +17,6 @@ jest.unstable_mockModule('@actions/core', () => ({
   setOutput: mockedCoreSetOutput,
 }));
 
-const mockedExec: jest.MockedFunction<
-  (commandLine: string, args?: string[]) => Promise<number>
-> = jest.fn();
-
-jest.unstable_mockModule('@actions/exec', () => ({
-  exec: mockedExec,
-}));
-
 const mockedTcDownloadTool: jest.MockedFunction<
   (url: string) => Promise<string>
 > = jest.fn();
@@ -62,6 +54,15 @@ const mockedWriteFile: jest.MockedFunction<
 > = jest.fn();
 const mockedMkdtemp: jest.MockedFunction<(prefix: string) => Promise<string>> =
   jest.fn();
+const mockedRm: jest.MockedFunction<
+  (
+    path: string,
+    options?: {
+      force?: boolean;
+      recursive?: boolean;
+    },
+  ) => Promise<void>
+> = jest.fn();
 
 jest.unstable_mockModule('node:os', () => ({
   platform: mockedPlatform,
@@ -72,6 +73,7 @@ jest.unstable_mockModule('node:os', () => ({
 jest.unstable_mockModule('node:fs/promises', () => ({
   writeFile: mockedWriteFile,
   mkdtemp: mockedMkdtemp,
+  rm: mockedRm,
 }));
 
 const mockedCreateLauncherBinary: jest.MockedFunction<
@@ -211,15 +213,30 @@ describe.each([
       version,
     );
 
-    expect(mockedExec).toHaveBeenCalledWith('rm', [
-      '-rf',
-      `${sdkDirectory}/doc`,
-      `${sdkDirectory}/gui`,
-      `${sdkDirectory}/LICENSE.txt`,
-      `${sdkDirectory}/sdk-fonts`,
-      `${sdkDirectory}/the_question`,
-      `${sdkDirectory}/update`,
-    ]);
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/doc`, {
+      force: true,
+      recursive: true,
+    });
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/gui`, {
+      force: true,
+      recursive: true,
+    });
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/LICENSE.txt`, {
+      force: true,
+      recursive: true,
+    });
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/sdk-fonts`, {
+      force: true,
+      recursive: true,
+    });
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/the_question`, {
+      force: true,
+      recursive: true,
+    });
+    expect(mockedRm).toHaveBeenCalledWith(`${sdkDirectory}/update`, {
+      force: true,
+      recursive: true,
+    });
 
     expect(mockedTcCacheDir).toHaveBeenCalledWith(
       sdkDirectory,

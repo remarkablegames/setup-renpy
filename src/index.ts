@@ -1,9 +1,8 @@
-import { mkdtemp } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import { platform, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
 import { addPath, getInput, setFailed, setOutput } from '@actions/core';
-import { exec } from '@actions/exec';
 import {
   cacheDir,
   downloadTool,
@@ -93,17 +92,18 @@ export async function run() {
     // Cache the SDK
     /* istanbul ignore else */
     if (!isCached) {
-      await exec('rm', [
-        '-rf',
-        ...[
+      await Promise.all(
+        [
           'doc',
           'gui',
           'LICENSE.txt',
           'sdk-fonts',
           'the_question',
           'update',
-        ].map((path) => resolve(binaryDirectory, path)),
-      ]);
+        ].map((path) =>
+          rm(resolve(binaryDirectory, path), { force: true, recursive: true }),
+        ),
+      );
 
       await cacheDir(binaryDirectory, toolName, version);
     }
