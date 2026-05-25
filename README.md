@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Ren'Py" height="200" src="https://raw.githubusercontent.com/remarkablegames/setup-renpy/master/renpy-logo.svg">
+  <img alt="Ren'Py" height="200" src="renpy-logo.svg">
 </p>
 
 # setup-renpy
