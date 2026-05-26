@@ -93,7 +93,7 @@ beforeEach(() => {
 describe.each([
   ['linux', 'arm64'],
   ['win32', 'x64'],
-])('when platform is %p and arch is %p', (platform, arch) => {
+])('when platform is %s and arch is %s', (platform, arch) => {
   beforeEach(() => {
     mockedPlatform.mockReturnValue(platform);
     mockedArch.mockReturnValue(arch);
@@ -220,7 +220,7 @@ describe.each([
   { rapt: true, renios: false, web: false },
   { rapt: false, renios: true, web: false },
   { rapt: false, renios: false, web: true },
-])('when input is %p and arch is %p', (inputs) => {
+])('when input is %o', (inputs) => {
   beforeEach(() => {
     mockedPlatform.mockReturnValue('darwin');
     mockedArch.mockReturnValue('x64');

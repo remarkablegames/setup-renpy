@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`createLauncherBinary > creates launcher binary on %p 1`] = `
+exports[`createLauncherBinary > creates launcher binary on darwin 1`] = `
 [
   [
     "wrapperDirectory/name",
@@ -11,7 +11,7 @@ exec "cliPath" "directory/launcher" "$@"
 ]
 `;
 
-exports[`createLauncherBinary > creates launcher binary on %p 2`] = `
+exports[`createLauncherBinary > creates launcher binary on linux 1`] = `
 [
   [
     "wrapperDirectory/name",
@@ -22,7 +22,7 @@ exec "cliPath" "directory/launcher" "$@"
 ]
 `;
 
-exports[`createLauncherBinary > creates launcher binary on win32 and version %p 1`] = `
+exports[`createLauncherBinary > creates launcher binary on win32 and version 7.8.5 1`] = `
 [
   [
     "wrapperDirectory/name.bat",
@@ -33,7 +33,7 @@ exports[`createLauncherBinary > creates launcher binary on win32 and version %p 
 ]
 `;
 
-exports[`createLauncherBinary > creates launcher binary on win32 and version %p 2`] = `
+exports[`createLauncherBinary > creates launcher binary on win32 and version 8.2.3 1`] = `
 [
   [
     "wrapperDirectory/name.bat",
@@ -88,13 +88,13 @@ exports[`createWindowsBinaryWrapper > creates wrapper binary 2`] = `
 ]
 `;
 
-exports[`getBinaryDirectory > returns CLI directory for arch %p 1`] = `"directory/renpy-8.2.1-sdkarm"`;
+exports[`getBinaryDirectory > returns CLI directory for arch arm 1`] = `"directory/renpy-8.2.1-sdkarm"`;
 
-exports[`getBinaryDirectory > returns CLI directory for arch %p 2`] = `"directory/renpy-8.2.1-sdk"`;
+exports[`getBinaryDirectory > returns CLI directory for arch x64 1`] = `"directory/renpy-8.2.1-sdk"`;
 
 exports[`getBinaryPath > returns CLI path 1`] = `"directory/name.sh"`;
 
-exports[`getDownloadObject > when arch is %p > gets download object 1`] = `
+exports[`getDownloadObject > when arch is arm > gets download object 1`] = `
 {
   "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
   "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",
@@ -103,7 +103,7 @@ exports[`getDownloadObject > when arch is %p > gets download object 1`] = `
 }
 `;
 
-exports[`getDownloadObject > when arch is %p > gets download object 2`] = `
+exports[`getDownloadObject > when arch is x64 > gets download object 1`] = `
 {
   "rapt": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-rapt.zip",
   "renios": "https://www.renpy.org/dl/8.2.1/renpy-8.2.1-renios.zip",

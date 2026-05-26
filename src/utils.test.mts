@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 
 describe('getDownloadObject', () => {
-  describe.each(architectures)('when arch is %p', (arch) => {
+  describe.each(architectures)('when arch is %s', (arch) => {
     beforeEach(() => {
       mockedArch.mockReturnValue(arch);
     });
@@ -50,7 +50,7 @@ describe('getBinaryPath', () => {
 });
 
 describe('getBinaryDirectory', () => {
-  it.each(architectures)('returns CLI directory for arch %p', async (arch) => {
+  it.each(architectures)('returns CLI directory for arch %s', async (arch) => {
     mockedArch.mockReturnValueOnce(arch);
     const { getBinaryDirectory } = await import('./utils.js');
     expect(getBinaryDirectory(directory, version)).toMatchSnapshot();
@@ -98,7 +98,7 @@ describe('createLauncherBinary', () => {
   const wrapperDirectory = 'wrapperDirectory';
 
   it.each(['darwin', 'linux'])(
-    'creates launcher binary on %p',
+    'creates launcher binary on %s',
     async (platform) => {
       mockedPlatform.mockReturnValue(platform);
       const { createLauncherBinary } = await import('./utils.js');
@@ -115,7 +115,7 @@ describe('createLauncherBinary', () => {
   );
 
   it.each(['7.8.5', '8.2.3'])(
-    'creates launcher binary on win32 and version %p',
+    'creates launcher binary on win32 and version %s',
     async (version) => {
       mockedPlatform.mockReturnValue('win32');
       const { writeFile } = await import('node:fs/promises');
