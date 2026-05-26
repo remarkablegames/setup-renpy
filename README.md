@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Ren'Py
-        uses: remarkablegames/setup-renpy@v1
+        uses: remarkablegames/setup-renpy@v2
 
       - name: Get version
         run: renpy-cli --version
@@ -37,7 +37,7 @@ jobs:
 Set up Ren'Py CLI:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
 ```
 
 See [action.yml](action.yml)
@@ -49,7 +49,7 @@ See [action.yml](action.yml)
 **Optional**: CLI name. Defaults to `renpy-cli`:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     cli-name: renpy-cli
 
@@ -61,7 +61,7 @@ See [action.yml](action.yml)
 **Optional**: CLI [version](https://www.renpy.org/release_list.html). Defaults to [`8.5.3`](https://www.renpy.org/release/8.5.3):
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     cli-version: 8.5.3
 
@@ -73,7 +73,7 @@ See [action.yml](action.yml)
 **Optional**: Launcher name. Defaults to `renpy-launcher`:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     launcher-name: renpy-launcher
 
@@ -83,7 +83,7 @@ See [action.yml](action.yml)
 `renpy-launcher` is a shorthand for:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   id: renpy
   with:
     cli-name: renpy-cli
@@ -96,7 +96,7 @@ See [action.yml](action.yml)
 **Optional**: Android Support (RAPT). Defaults to `false`:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     rapt: false
 ```
@@ -106,7 +106,7 @@ See [action.yml](action.yml)
 **Optional**: iOS Support (Renios). Defaults to `false`:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     renios: false
 ```
@@ -116,7 +116,7 @@ See [action.yml](action.yml)
 **Optional**: Web Platform Support (Renpyweb). Defaults to `false`:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   with:
     web: false
 ```
@@ -128,7 +128,7 @@ See [action.yml](action.yml)
 [Ren'Py launcher](https://www.renpy.org/doc/html/cli.html#launcher-commands) path:
 
 ```yaml
-- uses: remarkablegames/setup-renpy@v1
+- uses: remarkablegames/setup-renpy@v2
   id: renpy
 
 - run: renpy-cli ${{ steps.renpy.outputs.launcher }}
@@ -138,7 +138,7 @@ See [action.yml](action.yml)
 > Prefer `renpy-launcher` on Linux and macOS:
 >
 > ```yaml
-> - uses: remarkablegames/setup-renpy@v1
+> - uses: remarkablegames/setup-renpy@v2
 >
 > - run: renpy-launcher
 > ```
