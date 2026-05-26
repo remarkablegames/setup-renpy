@@ -5,6 +5,7 @@ jest.unstable_mockModule('@actions/exec', () => ({
 }));
 
 jest.unstable_mockModule('node:fs/promises', () => ({
+  mkdir: jest.fn(),
   writeFile: jest.fn(),
 }));
 
@@ -65,22 +66,53 @@ describe('getLauncherDirectory', () => {
   });
 });
 
+describe('createUnixBinaryWrapper', () => {
+  const command = '"cliPath"';
+
+  it('creates wrapper binary', async () => {
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    const { exec } = await import('@actions/exec');
+    const { createUnixBinaryWrapper } = await import('./utils.js');
+    await createUnixBinaryWrapper(directory, name, command);
+    expect((mkdir as jest.Mock).mock.calls).toMatchSnapshot();
+    expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+    expect(exec as jest.Mock).toHaveBeenCalledWith('chmod', [
+      '+x',
+      `${directory}/${name}`,
+    ]);
+  });
+});
+
+describe('createWindowsBinaryWrapper', () => {
+  const command = '"cliPath"';
+
+  it('creates wrapper binary', async () => {
+    const { mkdir, writeFile } = await import('node:fs/promises');
+    const { createWindowsBinaryWrapper } = await import('./utils.js');
+    await createWindowsBinaryWrapper(directory, name, command);
+    expect((mkdir as jest.Mock).mock.calls).toMatchSnapshot();
+    expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+  });
+});
+
 describe('createLauncherBinary', () => {
   const cliPath = 'cliPath';
+  const wrapperDirectory = 'wrapperDirectory';
 
   it.each(['darwin', 'linux'])(
     'creates launcher binary on %p',
     async (platform) => {
       mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
-      const { writeFile } = await import('node:fs/promises');
-      const { exec } = await import('@actions/exec');
       const { createLauncherBinary } = await import('./utils.js');
-      await createLauncherBinary(directory, name, cliPath, version);
+      await createLauncherBinary(
+        directory,
+        wrapperDirectory,
+        name,
+        cliPath,
+        version,
+      );
+      const { writeFile } = await import('node:fs/promises');
       expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
-      expect(exec as jest.Mock).toHaveBeenCalledWith('chmod', [
-        '+x',
-        `${directory}/${name}`,
-      ]);
     },
   );
 
@@ -90,7 +122,13 @@ describe('createLauncherBinary', () => {
       mockedPlatform.mockReturnValue('win32');
       const { writeFile } = await import('node:fs/promises');
       const { createLauncherBinary } = await import('./utils.js');
-      await createLauncherBinary(directory, name, cliPath, version);
+      await createLauncherBinary(
+        directory,
+        wrapperDirectory,
+        name,
+        cliPath,
+        version,
+      );
       expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
     },
   );

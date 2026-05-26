@@ -1,7 +1,8 @@
+import { mkdtemp, rm } from 'node:fs/promises';
+import { platform, tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 
 import { addPath, getInput, setFailed, setOutput } from '@actions/core';
-import { exec } from '@actions/exec';
 import {
   cacheDir,
   downloadTool,
@@ -12,6 +13,8 @@ import {
 
 import {
   createLauncherBinary,
+  createUnixBinaryWrapper,
+  createWindowsBinaryWrapper,
   getBinaryDirectory,
   getBinaryPath,
   getDownloadObject,
@@ -60,42 +63,61 @@ export async function run() {
     const launcherDirectory = getLauncherDirectory(binaryDirectory);
     setOutput('launcher', launcherDirectory);
 
-    const binaryPath = getBinaryPath(binaryDirectory, cliName).replace(
-      '.sh',
-      '',
+    const binaryPath = getBinaryPath(binaryDirectory, 'renpy');
+    const temporaryDirectory = process.env['RUNNER_TEMP'] ?? tmpdir();
+    const wrapperDirectory = await mkdtemp(
+      resolve(temporaryDirectory, 'setup-renpy-'),
     );
 
-    /* istanbul ignore else */
-    if (!isCached) {
-      // Rename the binary
-      await exec('mv', [getBinaryPath(binaryDirectory, 'renpy'), binaryPath]);
+    if (platform() === 'win32') {
+      await createWindowsBinaryWrapper(
+        wrapperDirectory,
+        cliName,
+        `"${resolve(binaryDirectory, 'renpy.exe')}"`,
+      );
+
+      if (cliName !== 'renpy') {
+        await createWindowsBinaryWrapper(
+          wrapperDirectory,
+          'renpy',
+          `"${resolve(binaryDirectory, 'renpy.exe')}"`,
+        );
+      }
+    } else {
+      await createUnixBinaryWrapper(
+        wrapperDirectory,
+        cliName,
+        `"${binaryPath}"`,
+      );
     }
 
     // Create the launcher binary
     await createLauncherBinary(
       binaryDirectory,
+      wrapperDirectory,
       launcherName,
       binaryPath,
       version,
     );
 
-    // Expose the SDK by adding it to the PATH
-    addPath(binaryDirectory);
+    // Expose the wrapper directory by adding it to the PATH.
+    addPath(wrapperDirectory);
 
     // Cache the SDK
     /* istanbul ignore else */
     if (!isCached) {
-      await exec('rm', [
-        '-rf',
-        ...[
+      await Promise.all(
+        [
           'doc',
           'gui',
           'LICENSE.txt',
           'sdk-fonts',
           'the_question',
           'update',
-        ].map((path) => resolve(binaryDirectory, path)),
-      ]);
+        ].map((path) =>
+          rm(resolve(binaryDirectory, path), { force: true, recursive: true }),
+        ),
+      );
 
       await cacheDir(binaryDirectory, toolName, version);
     }

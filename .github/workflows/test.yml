@@ -100,6 +100,15 @@ jobs:
           repository: remarkablegames/the-question
           path: the-question
 
+      - name: Build distributions
+        run: renpy-launcher distribute the-question --destination packages
+
+      - name: Check Unix distributables
+        if: runner.os != 'Windows'
+        run: |
+          unzip -l packages/*-pc.zip | grep 'the_question\.sh$'
+          tar -tjf packages/*-linux.tar.bz2 | grep 'the_question\.sh$'
+
       - name: Build web
         run: renpy-launcher web_build the-question --destination dist
 
@@ -110,4 +119,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: test-${{ matrix.os }}-${{ matrix.version }}
-          path: dist
+          path: |
+            dist
+            packages

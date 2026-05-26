@@ -3,8 +3,10 @@
 exports[`createLauncherBinary creates launcher binary on "darwin" 1`] = `
 [
   [
-    "directory/name",
-    "cliPath directory/launcher "$@"",
+    "wrapperDirectory/name",
+    "#!/usr/bin/env bash
+exec "cliPath" "directory/launcher" "$@"
+",
   ],
 ]
 `;
@@ -12,8 +14,10 @@ exports[`createLauncherBinary creates launcher binary on "darwin" 1`] = `
 exports[`createLauncherBinary creates launcher binary on "linux" 1`] = `
 [
   [
-    "directory/name",
-    "cliPath directory/launcher "$@"",
+    "wrapperDirectory/name",
+    "#!/usr/bin/env bash
+exec "cliPath" "directory/launcher" "$@"
+",
   ],
 ]
 `;
@@ -21,8 +25,10 @@ exports[`createLauncherBinary creates launcher binary on "linux" 1`] = `
 exports[`createLauncherBinary creates launcher binary on win32 and version "7.8.5" 1`] = `
 [
   [
-    "directory/name.bat",
-    "directory/lib/py2-windows-x86_64/python.exe directory/renpy.py directory/launcher %*",
+    "wrapperDirectory/name.bat",
+    "@echo off
+"directory/lib/py2-windows-x86_64/python.exe" "directory/renpy.py" "directory/launcher" %*
+",
   ],
 ]
 `;
@@ -30,8 +36,54 @@ exports[`createLauncherBinary creates launcher binary on win32 and version "7.8.
 exports[`createLauncherBinary creates launcher binary on win32 and version "8.2.3" 1`] = `
 [
   [
+    "wrapperDirectory/name.bat",
+    "@echo off
+"directory/lib/py3-windows-x86_64/python.exe" "directory/renpy.py" "directory/launcher" %*
+",
+  ],
+]
+`;
+
+exports[`createUnixBinaryWrapper creates wrapper binary 1`] = `
+[
+  [
+    "directory",
+    {
+      "recursive": true,
+    },
+  ],
+]
+`;
+
+exports[`createUnixBinaryWrapper creates wrapper binary 2`] = `
+[
+  [
+    "directory/name",
+    "#!/usr/bin/env bash
+exec "cliPath" "$@"
+",
+  ],
+]
+`;
+
+exports[`createWindowsBinaryWrapper creates wrapper binary 1`] = `
+[
+  [
+    "directory",
+    {
+      "recursive": true,
+    },
+  ],
+]
+`;
+
+exports[`createWindowsBinaryWrapper creates wrapper binary 2`] = `
+[
+  [
     "directory/name.bat",
-    "directory/lib/py3-windows-x86_64/python.exe directory/renpy.py directory/launcher %*",
+    "@echo off
+"cliPath" %*
+",
   ],
 ]
 `;

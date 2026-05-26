@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { resolve } from 'node:path';
 
@@ -57,15 +57,52 @@ export function getLauncherDirectory(directory: string) {
 }
 
 /**
+ * Creates Unix binary wrapper.
+ *
+ * @param directory - Wrapper directory
+ * @param name - Binary name
+ * @param command - Command to execute
+ */
+export async function createUnixBinaryWrapper(
+  directory: string,
+  name: string,
+  command: string,
+) {
+  const wrapperPath = resolve(directory, name);
+  await mkdir(directory, { recursive: true });
+  await writeFile(wrapperPath, `#!/usr/bin/env bash\nexec ${command} "$@"\n`);
+  await exec('chmod', ['+x', wrapperPath]);
+}
+
+/**
+ * Creates Windows binary wrapper.
+ *
+ * @param directory - Wrapper directory
+ * @param name - Binary name
+ * @param command - Command to execute
+ */
+export async function createWindowsBinaryWrapper(
+  directory: string,
+  name: string,
+  command: string,
+) {
+  const wrapperPath = resolve(directory, `${name}.bat`);
+  await mkdir(directory, { recursive: true });
+  await writeFile(wrapperPath, `@echo off\r\n${command} %*\r\n`);
+}
+
+/**
  * Creates launcher binary.
  *
  * @param binaryDirectory - Binary directory
+ * @param wrapperDirectory - Wrapper directory
  * @param launcherName - Launcher name
  * @param cliPath - Binary path
  * @param version - CLI version
  */
 export async function createLauncherBinary(
   binaryDirectory: string,
+  wrapperDirectory: string,
   launcherName: string,
   cliPath: string,
   version: string,
@@ -77,16 +114,16 @@ export async function createLauncherBinary(
       `py${version.startsWith('7.') ? '2' : '3'}-windows-x86_64`,
       'python.exe',
     );
-    await writeFile(
-      resolve(binaryDirectory, `${launcherName}.bat`),
-      `${pythonExecutable} ${resolve(binaryDirectory, 'renpy.py')} ${getLauncherDirectory(binaryDirectory)} %*`,
+    await createWindowsBinaryWrapper(
+      wrapperDirectory,
+      launcherName,
+      `"${pythonExecutable}" "${resolve(binaryDirectory, 'renpy.py')}" "${getLauncherDirectory(binaryDirectory)}"`,
     );
   } else {
-    const launcherPath = resolve(binaryDirectory, launcherName);
-    await writeFile(
-      launcherPath,
-      `${cliPath} ${getLauncherDirectory(binaryDirectory)} "$@"`,
+    await createUnixBinaryWrapper(
+      wrapperDirectory,
+      launcherName,
+      `"${cliPath}" "${getLauncherDirectory(binaryDirectory)}"`,
     );
-    await exec('chmod', ['+x', launcherPath]);
   }
 }
