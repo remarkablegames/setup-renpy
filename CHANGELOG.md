@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.0](https://github.com/remarkablegames/setup-renpy/compare/v2.1.9...v2.2.0) (2026-05-26)
+
+
+### Features
+
+* support custom cli names on windows ([ebfd065](https://github.com/remarkablegames/setup-renpy/commit/ebfd065a2342a5cbc5cd3963b849641d2c004299))
+
+
+### Bug Fixes
+
+* preserve renpy alias on windows ([8bf8f20](https://github.com/remarkablegames/setup-renpy/commit/8bf8f208d6ab2473bd700afdf2a38f778b0a85c9))
+* preserve renpy sdk shell script ([ec6020f](https://github.com/remarkablegames/setup-renpy/commit/ec6020f6fb3ca2ec66056cb1a09319c2b9f131ab))
+
 ## [2.1.9](https://github.com/remarkablegames/setup-renpy/compare/v2.1.8...v2.1.9) (2026-05-19)
 
 
