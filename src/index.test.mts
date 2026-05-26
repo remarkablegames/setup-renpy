@@ -1,133 +1,82 @@
-import { jest } from '@jest/globals';
+import * as fsPromises from 'node:fs/promises';
+import * as os from 'node:os';
 
-const mockedCoreGetInput: jest.MockedFunction<(name: string) => string> =
-  jest.fn();
-const mockedCoreSetFailed: jest.MockedFunction<(message: string) => void> =
-  jest.fn();
-const mockedCoreAddPath: jest.MockedFunction<(inputPath: string) => void> =
-  jest.fn();
-const mockedCoreSetOutput: jest.MockedFunction<
-  (name: string, value: string) => void
-> = jest.fn();
+import * as core from '@actions/core';
+import * as toolCache from '@actions/tool-cache';
 
-jest.unstable_mockModule('@actions/core', () => ({
-  getInput: mockedCoreGetInput,
-  setFailed: mockedCoreSetFailed,
-  addPath: mockedCoreAddPath,
-  setOutput: mockedCoreSetOutput,
+import * as utils from './utils.js';
+
+const { mockedArch, mockedPlatform } = vi.hoisted(() => ({
+  mockedArch: vi.fn<() => string>(),
+  mockedPlatform: vi.fn<() => string>(),
 }));
 
-const mockedTcDownloadTool: jest.MockedFunction<
-  (url: string) => Promise<string>
-> = jest.fn();
-
-const mockedTcExtractTar: jest.MockedFunction<
-  (file: string, dest?: string) => Promise<string>
-> = jest.fn();
-
-const mockedTcExtractZip: jest.MockedFunction<
-  (file: string, dest?: string) => Promise<string>
-> = jest.fn();
-
-const mockedTcCacheDir: jest.MockedFunction<
-  (sourceDir: string, tool: string, version: string) => Promise<string>
-> = jest.fn();
-
-const mockedTcFind: jest.MockedFunction<
-  (toolName: string, versionSpec: string) => string
-> = jest.fn();
-
-jest.unstable_mockModule('@actions/tool-cache', () => ({
-  downloadTool: mockedTcDownloadTool,
-  extractTar: mockedTcExtractTar,
-  extractZip: mockedTcExtractZip,
-  cacheDir: mockedTcCacheDir,
-  find: mockedTcFind,
+vi.mock('@actions/core', () => ({
+  getInput: vi.fn(),
+  setFailed: vi.fn(),
+  addPath: vi.fn(),
+  setOutput: vi.fn(),
 }));
 
-const mockedPlatform: jest.MockedFunction<() => NodeJS.Platform> = jest.fn();
-const mockedArch: jest.MockedFunction<() => NodeJS.Architecture> = jest.fn();
-const mockedTmpdir: jest.MockedFunction<() => string> = jest.fn();
+vi.mock('@actions/tool-cache', () => ({
+  downloadTool: vi.fn(),
+  extractTar: vi.fn(),
+  extractZip: vi.fn(),
+  cacheDir: vi.fn(),
+  find: vi.fn(),
+}));
 
-const mockedWriteFile: jest.MockedFunction<
-  (path: string, data: string) => Promise<void>
-> = jest.fn();
-const mockedMkdtemp: jest.MockedFunction<(prefix: string) => Promise<string>> =
-  jest.fn();
-const mockedRm: jest.MockedFunction<
-  (
-    path: string,
-    options?: {
-      force?: boolean;
-      recursive?: boolean;
-    },
-  ) => Promise<void>
-> = jest.fn();
-
-jest.unstable_mockModule('node:os', () => ({
+vi.mock('node:os', () => ({
   platform: mockedPlatform,
   arch: mockedArch,
-  tmpdir: mockedTmpdir,
+  tmpdir: vi.fn(),
 }));
 
-jest.unstable_mockModule('node:fs/promises', () => ({
-  writeFile: mockedWriteFile,
-  mkdtemp: mockedMkdtemp,
-  rm: mockedRm,
+vi.mock('node:fs/promises', () => ({
+  writeFile: vi.fn(),
+  mkdtemp: vi.fn(),
+  rm: vi.fn(),
 }));
 
-const mockedCreateLauncherBinary: jest.MockedFunction<
-  (
-    directory: string,
-    wrapperDirectory: string,
-    name: string,
-    cliPath: string,
-    version: string,
-  ) => Promise<void>
-> = jest.fn();
-const mockedCreateUnixBinaryWrapper: jest.MockedFunction<
-  (directory: string, name: string, command: string) => Promise<void>
-> = jest.fn();
-const mockedCreateWindowsBinaryWrapper: jest.MockedFunction<
-  (directory: string, name: string, command: string) => Promise<void>
-> = jest.fn();
-
-// Create mocked versions of utils functions that use the mocked os module
-const mockedGetDownloadObject = (version: string) => {
-  const isArm = mockedArch().includes('arm');
-  return {
-    sdk: `https://www.renpy.org/dl/${version}/renpy-${version}-sdk${isArm ? 'arm.tar.bz2' : '.zip'}`,
-    rapt: `https://www.renpy.org/dl/${version}/renpy-${version}-rapt.zip`,
-    renios: `https://www.renpy.org/dl/${version}/renpy-${version}-renios.zip`,
-    web: `https://www.renpy.org/dl/${version}/renpy-${version}-web.zip`,
-  };
-};
-
-const mockedGetBinaryDirectory = (directory: string, version: string) => {
-  return `${directory}/renpy-${version}-sdk${mockedArch().includes('arm') ? 'arm' : ''}`;
-};
-
-const mockedGetBinaryPath = (directory: string, name: string) => {
-  return `${directory}/${name}.sh`;
-};
-
-const mockedGetLauncherDirectory = (directory: string) => {
-  return `${directory}/launcher`;
-};
-
-jest.unstable_mockModule('./utils.js', () => ({
-  getDownloadObject: mockedGetDownloadObject,
-  getBinaryDirectory: mockedGetBinaryDirectory,
-  getBinaryPath: mockedGetBinaryPath,
-  getLauncherDirectory: mockedGetLauncherDirectory,
-  createLauncherBinary: mockedCreateLauncherBinary,
-  createUnixBinaryWrapper: mockedCreateUnixBinaryWrapper,
-  createWindowsBinaryWrapper: mockedCreateWindowsBinaryWrapper,
+vi.mock('./utils.js', () => ({
+  getDownloadObject: (version: string) => {
+    const isArm = mockedArch().includes('arm');
+    return {
+      sdk: `https://www.renpy.org/dl/${version}/renpy-${version}-sdk${isArm ? 'arm.tar.bz2' : '.zip'}`,
+      rapt: `https://www.renpy.org/dl/${version}/renpy-${version}-rapt.zip`,
+      renios: `https://www.renpy.org/dl/${version}/renpy-${version}-renios.zip`,
+      web: `https://www.renpy.org/dl/${version}/renpy-${version}-web.zip`,
+    };
+  },
+  getBinaryDirectory: (directory: string, version: string) =>
+    `${directory}/renpy-${version}-sdk${mockedArch().includes('arm') ? 'arm' : ''}`,
+  getBinaryPath: (directory: string, name: string) => `${directory}/${name}.sh`,
+  getLauncherDirectory: (directory: string) => `${directory}/launcher`,
+  createLauncherBinary: vi.fn(),
+  createUnixBinaryWrapper: vi.fn(),
+  createWindowsBinaryWrapper: vi.fn(),
 }));
 
-jest.unstable_mockModule('node:path', () => ({
-  resolve: jest.fn((...args: string[]) => args.join('/')),
+vi.mock('node:path', () => ({
+  resolve: vi.fn((...args: string[]) => args.join('/')),
 }));
+
+const mockedCoreGetInput = vi.mocked(core.getInput);
+const mockedCoreSetFailed = vi.mocked(core.setFailed);
+const mockedCoreAddPath = vi.mocked(core.addPath);
+const mockedCoreSetOutput = vi.mocked(core.setOutput);
+const mockedTcDownloadTool = vi.mocked(toolCache.downloadTool);
+const mockedTcExtractTar = vi.mocked(toolCache.extractTar);
+const mockedTcExtractZip = vi.mocked(toolCache.extractZip);
+const mockedTcCacheDir = vi.mocked(toolCache.cacheDir);
+const mockedTmpdir = vi.mocked(os.tmpdir);
+const mockedMkdtemp = vi.mocked(fsPromises.mkdtemp);
+const mockedRm = vi.mocked(fsPromises.rm);
+const mockedCreateLauncherBinary = vi.mocked(utils.createLauncherBinary);
+const mockedCreateUnixBinaryWrapper = vi.mocked(utils.createUnixBinaryWrapper);
+const mockedCreateWindowsBinaryWrapper = vi.mocked(
+  utils.createWindowsBinaryWrapper,
+);
 
 const cliName = 'cli-name';
 const version = '1.2.3';
@@ -138,19 +87,19 @@ const pathToTemp = 'path/to/temp';
 const pathToRunnerTemp = 'path/to/runner-temp';
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe.each([
   ['linux', 'arm64'],
   ['win32', 'x64'],
-])('when platform is %p and arch is %p', (platform, arch) => {
+])('when platform is %s and arch is %s', (platform, arch) => {
   beforeEach(() => {
-    mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
-    mockedArch.mockReturnValue(arch as NodeJS.Architecture);
+    mockedPlatform.mockReturnValue(platform);
+    mockedArch.mockReturnValue(arch);
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -271,13 +220,13 @@ describe.each([
   { rapt: true, renios: false, web: false },
   { rapt: false, renios: true, web: false },
   { rapt: false, renios: false, web: true },
-])('when input is %p and arch is %p', (inputs) => {
+])('when input is %o', (inputs) => {
   beforeEach(() => {
     mockedPlatform.mockReturnValue('darwin');
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -346,7 +295,7 @@ describe('temporary directory fallback', () => {
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToTemp}/setup-renpy-123`);
-    delete process.env['RUNNER_TEMP'];
+    delete process.env.RUNNER_TEMP;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -383,7 +332,7 @@ describe('windows compatibility alias', () => {
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {

@@ -64,7 +64,7 @@ export async function run() {
     setOutput('launcher', launcherDirectory);
 
     const binaryPath = getBinaryPath(binaryDirectory, 'renpy');
-    const temporaryDirectory = process.env['RUNNER_TEMP'] ?? tmpdir();
+    const temporaryDirectory = process.env.RUNNER_TEMP ?? tmpdir();
     const wrapperDirectory = await mkdtemp(
       resolve(temporaryDirectory, 'setup-renpy-'),
     );
@@ -129,4 +129,4 @@ export async function run() {
   }
 }
 
-run();
+void run();
