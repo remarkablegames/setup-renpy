@@ -7,8 +7,8 @@ import * as toolCache from '@actions/tool-cache';
 import * as utils from './utils.js';
 
 const { mockedArch, mockedPlatform } = vi.hoisted(() => ({
-  mockedArch: vi.fn(),
-  mockedPlatform: vi.fn(),
+  mockedArch: vi.fn<() => string>(),
+  mockedPlatform: vi.fn<() => string>(),
 }));
 
 vi.mock('@actions/core', () => ({
@@ -95,11 +95,11 @@ describe.each([
   ['win32', 'x64'],
 ])('when platform is %p and arch is %p', (platform, arch) => {
   beforeEach(() => {
-    mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
-    mockedArch.mockReturnValue(arch as NodeJS.Architecture);
+    mockedPlatform.mockReturnValue(platform);
+    mockedArch.mockReturnValue(arch);
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -226,7 +226,7 @@ describe.each([
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -295,7 +295,7 @@ describe('temporary directory fallback', () => {
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToTemp}/setup-renpy-123`);
-    delete process.env['RUNNER_TEMP'];
+    delete process.env.RUNNER_TEMP;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {
@@ -332,7 +332,7 @@ describe('windows compatibility alias', () => {
     mockedArch.mockReturnValue('x64');
     mockedTmpdir.mockReturnValue(pathToTemp);
     mockedMkdtemp.mockResolvedValue(`${pathToRunnerTemp}/setup-renpy-123`);
-    process.env['RUNNER_TEMP'] = pathToRunnerTemp;
+    process.env.RUNNER_TEMP = pathToRunnerTemp;
 
     mockedCoreGetInput.mockImplementation((input) => {
       switch (input) {

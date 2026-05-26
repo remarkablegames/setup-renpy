@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-import eslint from '@eslint/js';
+import js from '@eslint/js';
 import { defineConfig, includeIgnoreFile } from 'eslint/config';
 import prettier from 'eslint-plugin-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -22,17 +22,29 @@ export default defineConfig([
 
     plugins: {
       'simple-import-sort': simpleImportSort,
-      eslint,
+      js,
       prettier,
       tsdoc,
     },
 
-    extends: [eslint.configs.recommended, tseslint.configs.recommended],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.strictTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+    ],
 
     languageOptions: {
       globals: {
         ...globals.node,
         ...globals.vitest,
+      },
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['*.config.*', '*.config.ts', '*.config.mts'],
+        },
+        tsconfigRootDir: import.meta.dirname,
       },
     },
 

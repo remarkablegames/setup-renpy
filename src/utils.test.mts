@@ -29,7 +29,7 @@ beforeEach(() => {
 describe('getDownloadObject', () => {
   describe.each(architectures)('when arch is %p', (arch) => {
     beforeEach(() => {
-      mockedArch.mockReturnValue(arch as NodeJS.Architecture);
+      mockedArch.mockReturnValue(arch);
     });
 
     it('gets download object', async () => {
@@ -100,7 +100,7 @@ describe('createLauncherBinary', () => {
   it.each(['darwin', 'linux'])(
     'creates launcher binary on %p',
     async (platform) => {
-      mockedPlatform.mockReturnValue(platform as NodeJS.Platform);
+      mockedPlatform.mockReturnValue(platform);
       const { createLauncherBinary } = await import('./utils.js');
       await createLauncherBinary(
         directory,
