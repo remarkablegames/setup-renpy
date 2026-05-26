@@ -1,31 +1,29 @@
-import { jest } from '@jest/globals';
-
-jest.unstable_mockModule('@actions/exec', () => ({
-  exec: jest.fn(),
+vi.mock('@actions/exec', () => ({
+  exec: vi.fn(),
 }));
 
-jest.unstable_mockModule('node:fs/promises', () => ({
-  mkdir: jest.fn(),
-  writeFile: jest.fn(),
+vi.mock('node:fs/promises', () => ({
+  mkdir: vi.fn(),
+  writeFile: vi.fn(),
 }));
 
-const mockedArch = jest.fn();
-const mockedPlatform = jest.fn();
+const mockedArch = vi.fn();
+const mockedPlatform = vi.fn();
 
-jest.unstable_mockModule('node:os', () => ({
+vi.mock('node:os', () => ({
   arch: mockedArch,
   platform: mockedPlatform,
 }));
 
-jest.unstable_mockModule('node:path', () => ({
-  resolve: jest.fn((...args: string[]) => args.join('/')),
+vi.mock('node:path', () => ({
+  resolve: vi.fn((...args: string[]) => args.join('/')),
 }));
 
 const architectures: NodeJS.Architecture[] = ['arm', 'x64'];
 const version = '8.2.1';
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 describe('getDownloadObject', () => {
@@ -74,9 +72,9 @@ describe('createUnixBinaryWrapper', () => {
     const { exec } = await import('@actions/exec');
     const { createUnixBinaryWrapper } = await import('./utils.js');
     await createUnixBinaryWrapper(directory, name, command);
-    expect((mkdir as jest.Mock).mock.calls).toMatchSnapshot();
-    expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
-    expect(exec as jest.Mock).toHaveBeenCalledWith('chmod', [
+    expect(vi.mocked(mkdir).mock.calls).toMatchSnapshot();
+    expect(vi.mocked(writeFile).mock.calls).toMatchSnapshot();
+    expect(vi.mocked(exec)).toHaveBeenCalledWith('chmod', [
       '+x',
       `${directory}/${name}`,
     ]);
@@ -90,8 +88,8 @@ describe('createWindowsBinaryWrapper', () => {
     const { mkdir, writeFile } = await import('node:fs/promises');
     const { createWindowsBinaryWrapper } = await import('./utils.js');
     await createWindowsBinaryWrapper(directory, name, command);
-    expect((mkdir as jest.Mock).mock.calls).toMatchSnapshot();
-    expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+    expect(vi.mocked(mkdir).mock.calls).toMatchSnapshot();
+    expect(vi.mocked(writeFile).mock.calls).toMatchSnapshot();
   });
 });
 
@@ -112,7 +110,7 @@ describe('createLauncherBinary', () => {
         version,
       );
       const { writeFile } = await import('node:fs/promises');
-      expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+      expect(vi.mocked(writeFile).mock.calls).toMatchSnapshot();
     },
   );
 
@@ -129,7 +127,7 @@ describe('createLauncherBinary', () => {
         cliPath,
         version,
       );
-      expect((writeFile as jest.Mock).mock.calls).toMatchSnapshot();
+      expect(vi.mocked(writeFile).mock.calls).toMatchSnapshot();
     },
   );
 });
