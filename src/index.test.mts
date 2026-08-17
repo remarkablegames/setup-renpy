@@ -55,6 +55,7 @@ vi.mock('./utils.js', () => ({
   createLauncherBinary: vi.fn(),
   createUnixBinaryWrapper: vi.fn(),
   createWindowsBinaryWrapper: vi.fn(),
+  resolvePath: vi.fn((...paths: string[]) => paths.join('/')),
 }));
 
 vi.mock('node:path', () => ({

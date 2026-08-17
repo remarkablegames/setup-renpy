@@ -19,6 +19,7 @@ import {
   getBinaryPath,
   getDownloadObject,
   getLauncherDirectory,
+  resolvePath,
 } from './utils';
 
 const ADDONS = ['rapt', 'renios', 'web'] as const;
@@ -66,7 +67,7 @@ export async function run() {
     const binaryPath = getBinaryPath(binaryDirectory, 'renpy');
     const temporaryDirectory = process.env.RUNNER_TEMP ?? tmpdir();
     const wrapperDirectory = await mkdtemp(
-      resolve(temporaryDirectory, 'setup-renpy-'),
+      resolvePath(temporaryDirectory, 'setup-renpy-'),
     );
 
     if (platform() === 'win32') {
