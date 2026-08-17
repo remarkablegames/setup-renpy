@@ -5,6 +5,21 @@ import { resolve } from 'node:path';
 import { exec } from '@actions/exec';
 
 /**
+ * Wraps `path.resolve` to avoid ncc's asset relocator.
+ *
+ * ncc 0.45 treats literal strings inside `path.resolve(...)` / `path.join(...)`
+ * as static asset references and copies matching project files into `dist`.
+ * This wrapper delegates to `path.resolve` but hides the call from the static
+ * analyzer, so runtime path construction is not mistaken for a bundled asset.
+ *
+ * @param paths - Path segments to resolve.
+ * @returns Resolved path.
+ */
+export function resolvePath(...paths: string[]) {
+  return resolve(...paths);
+}
+
+/**
  * Gets download object.
  *
  * @see {@link https://www.renpy.org/latest.html}
@@ -29,7 +44,7 @@ export function getDownloadObject(version: string) {
  * @returns - Binary path
  */
 export function getBinaryPath(directory: string, name: string) {
-  return resolve(directory, `${name}.sh`);
+  return resolvePath(directory, `${name}.sh`);
 }
 
 /**
@@ -53,7 +68,7 @@ export function getBinaryDirectory(directory: string, version: string) {
  * @returns - Launcher directory
  */
 export function getLauncherDirectory(directory: string) {
-  return resolve(directory, 'launcher');
+  return resolvePath(directory, 'launcher');
 }
 
 /**
@@ -86,7 +101,7 @@ export async function createWindowsBinaryWrapper(
   name: string,
   command: string,
 ) {
-  const wrapperPath = resolve(directory, `${name}.bat`);
+  const wrapperPath = resolvePath(directory, `${name}.bat`);
   await mkdir(directory, { recursive: true });
   await writeFile(wrapperPath, `@echo off\r\n${command} %*\r\n`);
 }
