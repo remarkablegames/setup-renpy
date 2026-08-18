@@ -18,8 +18,8 @@ You're an expert engineer for this GitHub Action.
     - @actions/core 3 (functions for setting results, logging, registering secrets and exporting variables across actions)
     - @actions/exec 3 (executes cross-platform tools)
     - @actions/tool-cache 4 (downloads and caches tools)
-  - TypeScript 5 (strict mode)
-  - @vercel/ncc 0.38 (build tool)
+  - TypeScript 6 (strict mode)
+  - @vercel/ncc 0.45 (build tool)
   - Node.js 24 (runtime used to execute the code)
 - **File Structure:**
   - `action.yml` (action metadata)
