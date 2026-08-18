@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/remarkablegames/setup-renpy/compare/v2.2.2...v2.2.3) (2026-08-18)
+
+
+### Build System
+
+* **deps-dev:** bump @vercel/ncc from 0.44.1 to 0.45.0 ([#681](https://github.com/remarkablegames/setup-renpy/issues/681)) ([22ae07f](https://github.com/remarkablegames/setup-renpy/commit/22ae07fcce0c1cbbd719c08cdfd3b29c62633af2))
+
 ## [2.2.2](https://github.com/remarkablegames/setup-renpy/compare/v2.2.1...v2.2.2) (2026-08-06)
 
 
