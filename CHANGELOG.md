@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.6](https://github.com/remarkablegames/setup-renpy/compare/v2.2.5...v2.2.6) (2026-11-15)
+
+
+### Build System
+
+* **deps:** bump renpy from 8.5.3 to 8.6.0 ([#740](https://github.com/remarkablegames/setup-renpy/issues/740)) ([3fceb22](https://github.com/remarkablegames/setup-renpy/commit/3fceb2278dad783f03755f47a37020663bf18f38))
+
 ## [2.2.5](https://github.com/remarkablegames/setup-renpy/compare/v2.2.4...v2.2.5) (2026-10-27)
 
 
