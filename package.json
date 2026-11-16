@@ -1,8 +1,6 @@
 {
   "name": "setup-renpy",
   "version": "2.2.6",
-  "description": "Set up GitHub Actions workflow with Ren'Py CLI",
-  "author": "Mark <mark@remarkablemark.org>",
   "main": "src/index.ts",
   "scripts": {
     "build": "ncc build --minify",
@@ -10,11 +8,11 @@
     "clean": "rm -rf coverage dist",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "lint:tsc": "tsc --noEmit",
+    "lint:tsc": "tsc",
     "prepare": "husky",
     "test": "vitest run",
     "test:ci": "CI=true npm test -- --color --coverage",
-    "test:watch": "vitest --coverage.enabled=false"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@actions/core": "3.0.1",
@@ -32,7 +30,6 @@
     "eslint-plugin-prettier": "5.5.7",
     "eslint-plugin-simple-import-sort": "14.0.0",
     "eslint-plugin-tsdoc": "0.5.4",
-    "globals": "17.14.0",
     "husky": "9.1.7",
     "vitest": "5.1.0",
     "lint-staged": "17.6.0",
@@ -41,6 +38,5 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2"
   },
-  "private": true,
-  "license": "MIT"
+  "private": true
 }
