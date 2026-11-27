@@ -1,6 +1,6 @@
 {
   "name": "setup-renpy",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "main": "src/index.ts",
   "scripts": {
     "build": "ncc build --minify",
